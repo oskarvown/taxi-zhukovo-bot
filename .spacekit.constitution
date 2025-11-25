@@ -1,0 +1,177 @@
+# Taxi Жуково - Telegram Bot Constitution
+
+## Project Overview
+**Name:** Taxi Жуково Bot
+**Type:** Telegram Service Bot
+**Purpose:** Автоматизация вызова такси в Жуково и прилегающих районах
+
+## Core Functionality
+
+### 1. User Features
+- Регистрация и аутентификация пользователей
+- Заказ такси с указанием адресов откуда/куда
+- Просмотр статуса текущего заказа
+- История поездок
+- Оценка водителей
+- Расчет стоимости поездки
+
+### 2. Driver Features
+- Регистрация водителей
+- Прием и отклонение заказов
+- Просмотр активных заказов
+- История выполненных заказов
+- Управление статусом (онлайн/оффлайн)
+
+### 3. Admin Features
+- Управление пользователями и водителями
+- Просмотр статистики
+- Управление ценами
+- Модерация отзывов
+
+## Technical Architecture
+
+### Technology Stack
+- **Language:** Python 3.10+
+- **Framework:** python-telegram-bot (v20+)
+- **Database:** SQLite (для начала) / PostgreSQL (для продакшн)
+- **ORM:** SQLAlchemy
+- **Async:** asyncio + aiohttp
+
+### Project Structure
+```
+taxi-zhukovo-bot/
+├── .spacekit.constitution      # Этот файл
+├── bot/
+│   ├── __init__.py
+│   ├── main.py                 # Точка входа
+│   ├── config.py               # Конфигурация
+│   ├── handlers/               # Обработчики команд
+│   │   ├── __init__.py
+│   │   ├── user.py            # Команды пользователей
+│   │   ├── driver.py          # Команды водителей
+│   │   └── admin.py           # Админ команды
+│   ├── models/                 # Модели данных
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── driver.py
+│   │   └── order.py
+│   ├── services/               # Бизнес-логика
+│   │   ├── __init__.py
+│   │   ├── order_service.py
+│   │   ├── pricing_service.py
+│   │   └── matching_service.py
+│   └── utils/                  # Утилиты
+│       ├── __init__.py
+│       ├── keyboards.py        # Telegram клавиатуры
+│       └── validators.py       # Валидация данных
+├── database/
+│   ├── __init__.py
+│   ├── db.py                   # Подключение к БД
+│   └── migrations/             # Миграции
+├── tests/                      # Тесты
+├── requirements.txt            # Зависимости
+├── .env.example               # Пример переменных окружения
+├── .gitignore
+└── README.md
+```
+
+## User Workflows
+
+### Customer Journey
+1. `/start` - Приветствие и регистрация
+2. `/order` - Создание нового заказа
+   - Ввод адреса отправления
+   - Ввод адреса назначения
+   - Подтверждение и расчет стоимости
+3. Ожидание водителя
+4. Уведомление о принятии заказа
+5. Информация о водителе и машине
+6. Завершение поездки
+7. Оценка и отзыв
+
+### Driver Journey
+1. `/start` - Регистрация водителя (требует подтверждения админа)
+2. `/online` - Перейти в режим работы
+3. Получение уведомления о новом заказе
+4. Принятие или отклонение заказа
+5. Навигация к клиенту
+6. Начало поездки
+7. Завершение поездки
+8. `/offline` - Выход из режима работы
+
+## Data Models
+
+### User
+- id (Primary Key)
+- telegram_id (Unique)
+- username
+- phone_number
+- role (customer/driver/admin)
+- created_at
+- is_active
+
+### Order
+- id (Primary Key)
+- customer_id (Foreign Key -> User)
+- driver_id (Foreign Key -> User, nullable)
+- pickup_address
+- dropoff_address
+- status (pending/accepted/in_progress/completed/cancelled)
+- price
+- created_at
+- updated_at
+- completed_at
+
+### Driver
+- id (Primary Key)
+- user_id (Foreign Key -> User)
+- car_model
+- car_number
+- license_number
+- rating
+- is_online
+- is_verified
+
+## API & Integration Points
+
+### Telegram Bot API
+- Webhook или long polling
+- Inline keyboards для интерфейса
+- Location sharing для адресов
+- Notifications для статусов заказов
+
+### External Services (Optional)
+- Yandex Maps API / Google Maps API - для геокодирования и расчета расстояний
+- Платежные системы (будущее расширение)
+
+## Security & Privacy
+
+- Валидация всех пользовательских входов
+- Хранение токенов в переменных окружения
+- Шифрование чувствительных данных
+- GDPR compliance для личных данных
+- Rate limiting для предотвращения спама
+
+## Scalability Considerations
+
+- Асинхронная обработка запросов
+- Кэширование часто используемых данных
+- Очередь заданий для обработки заказов
+- Возможность перехода на микросервисную архитектуру
+
+## Monitoring & Logging
+
+- Логирование всех действий пользователей
+- Мониторинг производительности бота
+- Алерты при ошибках
+- Метрики: количество заказов, время отклика, рейтинги
+
+## Future Enhancements
+
+- Интеграция с платежными системами
+- Поддержка заказа на определенное время
+- Групповые поездки
+- Корпоративные аккаунты
+- Мобильное приложение для водителей
+- Система лояльности и промокодов
+

@@ -1,0 +1,21 @@
+{
+  "include": [
+    "bot",
+    "database",
+    "*.py"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    "**/.venv",
+    "**/venv",
+    "**/node_modules",
+    "**/.git"
+  ],
+  "reportMissingImports": "warning",
+  "reportMissingTypeStubs": false,
+  "pythonVersion": "3.10",
+  "typeCheckingMode": "basic",
+  "reportGeneralTypeIssues": "warning",
+  "reportOptionalMemberAccess": "warning",
+  "reportArgumentType": "warning"
+}

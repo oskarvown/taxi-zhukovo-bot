@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  taxi-bot:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    container_name: taxi-zhukovo-bot
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    volumes:
+      # Монтирование базы данных для сохранения данных
+      - ../data:/app/data
+      # Монтирование логов
+      - ../logs:/app/logs
+      # Монтирование конфигурации цен (если нужно обновлять без пересборки)
+      - ../bot/config:/app/bot/config
+    environment:
+      - DATABASE_URL=sqlite:///./data/taxi_zhukovo.db
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    # Ограничения ресурсов
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+

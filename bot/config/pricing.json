@@ -1,0 +1,2026 @@
+{
+  "meta": {
+    "version": "1.1",
+    "generated_at": "2025-11-07T21:30:23.551502Z",
+    "notes": "Ночные тарифы отключены. Все цены — дневные. Для UFA_OTHER применяем режим межгорода: 36 ₽/км (можно поменять в pricing_rules.intercity_rate_per_km)."
+  },
+  "zones": [
+    {
+      "id": "STARY_ZHUKOVO",
+      "name": "Старое Жуково"
+    },
+    {
+      "id": "NOVY_ZHUKOVO",
+      "name": "Новое Жуково"
+    },
+    {
+      "id": "DEMA",
+      "name": "Дёма"
+    },
+    {
+      "id": "AVDON",
+      "name": "Авдон"
+    },
+    {
+      "id": "UPTINO",
+      "name": "Уптино"
+    },
+    {
+      "id": "MYSOVCEVO",
+      "name": "Мысовцево"
+    },
+    {
+      "id": "PO_ZHUKOVO",
+      "name": "По Жуково"
+    },
+    {
+      "id": "AIRPORT",
+      "name": "Аэропорт"
+    },
+    {
+      "id": "UFA_CENTER",
+      "name": "Уфа-Центр"
+    },
+    {
+      "id": "UFA_TELECENTER",
+      "name": "Телецентр"
+    },
+    {
+      "id": "UFA_SIPAYLOVO",
+      "name": "Сипайлово"
+    },
+    {
+      "id": "UFA_CHERNIK",
+      "name": "Черниковка"
+    },
+    {
+      "id": "UFA_CHESNOK",
+      "name": "Чесноковка"
+    },
+    {
+      "id": "UFA_INORS",
+      "name": "Инорс"
+    },
+    {
+      "id": "UFA_ZELENAYA_ROSCHA",
+      "name": "Зелёная роща"
+    },
+    {
+      "id": "RAILWAY_STATION",
+      "name": "Ж/Д вокзал"
+    },
+    {
+      "id": "DMITRIEVKA",
+      "name": "Дмитриевка"
+    },
+    {
+      "id": "MIKHAYLOVKA",
+      "name": "Михайловка"
+    },
+    {
+      "id": "MILOVSKY_PARK",
+      "name": "Миловский Парк"
+    },
+    {
+      "id": "MILOVKA",
+      "name": "Миловка"
+    },
+    {
+      "id": "NIKOLAEVKA",
+      "name": "Николаевка"
+    },
+    {
+      "id": "IGLINO",
+      "name": "Иглино"
+    },
+    {
+      "id": "SHAKSHA",
+      "name": "Шакша"
+    },
+    {
+      "id": "AKBERDINO",
+      "name": "Акбердино"
+    },
+    {
+      "id": "NAGAEVO",
+      "name": "Нагаево"
+    },
+    {
+      "id": "CHISHMY",
+      "name": "Чишмы"
+    },
+    {
+      "id": "ALKINO",
+      "name": "Алкино"
+    },
+    {
+      "id": "YUMATOVO",
+      "name": "Юматово"
+    },
+    {
+      "id": "CAFE_REST",
+      "name": "Кафе Отдых"
+    },
+    {
+      "id": "ZATON",
+      "name": "Затон"
+    },
+    {
+      "id": "SERGEEVKA",
+      "name": "Сергеевка"
+    },
+    {
+      "id": "MEGA",
+      "name": "ТРЦ МЕГА"
+    },
+    {
+      "id": "YARKIY",
+      "name": "Яркий"
+    },
+    {
+      "id": "VIETNAM_MARKET",
+      "name": "Вьетнамский рынок"
+    },
+    {
+      "id": "PROSPEKT_OKTYABRYA",
+      "name": "Проспект Октября"
+    },
+    {
+      "id": "PROSPEKT_OKTYABRYA_GALLE",
+      "name": "Проспект Октября — Галле"
+    },
+    {
+      "id": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "name": "Проспект Октября — Горсовет"
+    },
+    {
+      "id": "PROSPEKT_OKTYABRYA_GDK",
+      "name": "Проспект Октября — ГДК"
+    },
+    {
+      "id": "PO_AVDON",
+      "name": "По Авдону"
+    },
+    {
+      "id": "PO_DEMA",
+      "name": "По Дёме"
+    },
+    {
+      "id": "PO_SERGEEVKA",
+      "name": "По Сергеевке"
+    }
+  ],
+  "pricing_rules": {
+    "night_mode_enabled": false,
+    "fallback_symmetry": true,
+    "intercity_rate_per_km": 36.0,
+    "intercity_pricing_mode": "per_km"
+  },
+  "prices": [
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "UFA_CENTER",
+      "price": 750
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "UFA_TELECENTER",
+      "price": 700
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "UFA_SIPAYLOVO",
+      "price": 1000
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "UFA_CHERNIK",
+      "price": 1250
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "UFA_CHESNOK",
+      "price": 800
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "UFA_CENTER",
+      "price": 700
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "UFA_TELECENTER",
+      "price": 700
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "UFA_SIPAYLOVO",
+      "price": 1000
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "UFA_CHERNIK",
+      "price": 1250
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "UFA_CHESNOK",
+      "price": 800
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "PO_ZHUKOVO",
+      "price": 150
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "PO_ZHUKOVO",
+      "price": 150
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "DEMA",
+      "price": 450
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "DEMA",
+      "price": 400
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "DEMA",
+      "price": 500
+    },
+    {
+      "from": "DEMA",
+      "to": "STARY_ZHUKOVO",
+      "price": 450
+    },
+    {
+      "from": "DEMA",
+      "to": "NOVY_ZHUKOVO",
+      "price": 400
+    },
+    {
+      "from": "DEMA",
+      "to": "MYSOVCEVO",
+      "price": 500
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "AVDON",
+      "price": 450
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "AVDON",
+      "price": 400
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "AVDON",
+      "price": 450
+    },
+    {
+      "from": "AVDON",
+      "to": "STARY_ZHUKOVO",
+      "price": 450
+    },
+    {
+      "from": "AVDON",
+      "to": "NOVY_ZHUKOVO",
+      "price": 400
+    },
+    {
+      "from": "AVDON",
+      "to": "MYSOVCEVO",
+      "price": 450
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "UPTINO",
+      "price": 500
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "UPTINO",
+      "price": 450
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "UPTINO",
+      "price": 500
+    },
+    {
+      "from": "UPTINO",
+      "to": "STARY_ZHUKOVO",
+      "price": 500
+    },
+    {
+      "from": "UPTINO",
+      "to": "NOVY_ZHUKOVO",
+      "price": 450
+    },
+    {
+      "from": "UPTINO",
+      "to": "MYSOVCEVO",
+      "price": 500
+    },
+    {
+      "from": "DEMA",
+      "to": "UFA_CENTER",
+      "price": 500
+    },
+    {
+      "from": "DEMA",
+      "to": "UFA_TELECENTER",
+      "price": 500
+    },
+    {
+      "from": "DEMA",
+      "to": "UFA_SIPAYLOVO",
+      "price": 800
+    },
+    {
+      "from": "DEMA",
+      "to": "UFA_CHERNIK",
+      "price": 900
+    },
+    {
+      "from": "DEMA",
+      "to": "UFA_CHESNOK",
+      "price": 500
+    },
+    {
+      "from": "AVDON",
+      "to": "UFA_CENTER",
+      "price": 800
+    },
+    {
+      "from": "AVDON",
+      "to": "UFA_TELECENTER",
+      "price": 800
+    },
+    {
+      "from": "AVDON",
+      "to": "UFA_SIPAYLOVO",
+      "price": 1000
+    },
+    {
+      "from": "AVDON",
+      "to": "UFA_CHERNIK",
+      "price": 1200
+    },
+    {
+      "from": "AVDON",
+      "to": "UFA_CHESNOK",
+      "price": 900
+    },
+    {
+      "from": "UPTINO",
+      "to": "UFA_CENTER",
+      "price": 800
+    },
+    {
+      "from": "UPTINO",
+      "to": "UFA_TELECENTER",
+      "price": 800
+    },
+    {
+      "from": "UPTINO",
+      "to": "UFA_SIPAYLOVO",
+      "price": 1000
+    },
+    {
+      "from": "UPTINO",
+      "to": "UFA_CHERNIK",
+      "price": 1200
+    },
+    {
+      "from": "UPTINO",
+      "to": "UFA_CHESNOK",
+      "price": 900
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "UFA_CENTER",
+      "price": 750
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "UFA_TELECENTER",
+      "price": 700
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "UFA_SIPAYLOVO",
+      "price": 1000
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "UFA_CHERNIK",
+      "price": 1250
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "UFA_CHESNOK",
+      "price": 800
+    },
+    {
+      "from": "PO_ZHUKOVO",
+      "to": "PO_ZHUKOVO",
+      "price": 150
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "UFA_INORS",
+      "price": 950
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "UFA_ZELENAYA_ROSCHA",
+      "price": 900
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "UFA_INORS",
+      "price": 900
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "UFA_ZELENAYA_ROSCHA",
+      "price": 850
+    },
+    {
+      "from": "DEMA",
+      "to": "UFA_INORS",
+      "price": 800
+    },
+    {
+      "from": "DEMA",
+      "to": "UFA_ZELENAYA_ROSCHA",
+      "price": 500
+    },
+    {
+      "from": "AVDON",
+      "to": "UFA_INORS",
+      "price": 1200
+    },
+    {
+      "from": "AVDON",
+      "to": "UFA_ZELENAYA_ROSCHA",
+      "price": 800
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "AIRPORT",
+      "price": 1000
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "AIRPORT",
+      "price": 1000
+    },
+    {
+      "from": "DEMA",
+      "to": "AIRPORT",
+      "price": 900
+    },
+    {
+      "from": "AVDON",
+      "to": "AIRPORT",
+      "price": 1100
+    },
+    {
+      "from": "UPTINO",
+      "to": "AIRPORT",
+      "price": 1200
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "AIRPORT",
+      "price": 1000
+    },
+    {
+      "from": "AIRPORT",
+      "to": "STARY_ZHUKOVO",
+      "price": 1000
+    },
+    {
+      "from": "AIRPORT",
+      "to": "NOVY_ZHUKOVO",
+      "price": 1000
+    },
+    {
+      "from": "AIRPORT",
+      "to": "DEMA",
+      "price": 900
+    },
+    {
+      "from": "AIRPORT",
+      "to": "AVDON",
+      "price": 1100
+    },
+    {
+      "from": "AIRPORT",
+      "to": "UPTINO",
+      "price": 1200
+    },
+    {
+      "from": "AIRPORT",
+      "to": "MYSOVCEVO",
+      "price": 1000
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "RAILWAY_STATION",
+      "price": 1000
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "RAILWAY_STATION",
+      "price": 1000
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "RAILWAY_STATION",
+      "price": 1000
+    },
+    {
+      "from": "DEMA",
+      "to": "RAILWAY_STATION",
+      "price": 800
+    },
+    {
+      "from": "AVDON",
+      "to": "RAILWAY_STATION",
+      "price": 1000
+    },
+    {
+      "from": "UPTINO",
+      "to": "RAILWAY_STATION",
+      "price": 1250
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "DMITRIEVKA",
+      "price": 700
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "DMITRIEVKA",
+      "price": 700
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "DMITRIEVKA",
+      "price": 700
+    },
+    {
+      "from": "DEMA",
+      "to": "DMITRIEVKA",
+      "price": 500
+    },
+    {
+      "from": "AVDON",
+      "to": "DMITRIEVKA",
+      "price": 850
+    },
+    {
+      "from": "UPTINO",
+      "to": "DMITRIEVKA",
+      "price": 950
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "MIKHAYLOVKA",
+      "price": 750
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "MIKHAYLOVKA",
+      "price": 750
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "MIKHAYLOVKA",
+      "price": 750
+    },
+    {
+      "from": "DEMA",
+      "to": "MIKHAYLOVKA",
+      "price": 550
+    },
+    {
+      "from": "AVDON",
+      "to": "MIKHAYLOVKA",
+      "price": 900
+    },
+    {
+      "from": "UPTINO",
+      "to": "MIKHAYLOVKA",
+      "price": 1000
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "MILOVSKY_PARK",
+      "price": 550
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "MILOVSKY_PARK",
+      "price": 550
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "MILOVSKY_PARK",
+      "price": 550
+    },
+    {
+      "from": "DEMA",
+      "to": "MILOVSKY_PARK",
+      "price": 350
+    },
+    {
+      "from": "AVDON",
+      "to": "MILOVSKY_PARK",
+      "price": 700
+    },
+    {
+      "from": "UPTINO",
+      "to": "MILOVSKY_PARK",
+      "price": 800
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "MILOVKA",
+      "price": 600
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "MILOVKA",
+      "price": 600
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "MILOVKA",
+      "price": 600
+    },
+    {
+      "from": "DEMA",
+      "to": "MILOVKA",
+      "price": 400
+    },
+    {
+      "from": "AVDON",
+      "to": "MILOVKA",
+      "price": 750
+    },
+    {
+      "from": "UPTINO",
+      "to": "MILOVKA",
+      "price": 850
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "NIKOLAEVKA",
+      "price": 800
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "NIKOLAEVKA",
+      "price": 800
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "NIKOLAEVKA",
+      "price": 800
+    },
+    {
+      "from": "DEMA",
+      "to": "NIKOLAEVKA",
+      "price": 600
+    },
+    {
+      "from": "AVDON",
+      "to": "NIKOLAEVKA",
+      "price": 950
+    },
+    {
+      "from": "UPTINO",
+      "to": "NIKOLAEVKA",
+      "price": 1050
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "IGLINO",
+      "price": 1700
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "IGLINO",
+      "price": 1700
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "IGLINO",
+      "price": 1700
+    },
+    {
+      "from": "DEMA",
+      "to": "IGLINO",
+      "price": 1500
+    },
+    {
+      "from": "AVDON",
+      "to": "IGLINO",
+      "price": 1850
+    },
+    {
+      "from": "UPTINO",
+      "to": "IGLINO",
+      "price": 1950
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "SHAKSHA",
+      "price": 1500
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "SHAKSHA",
+      "price": 1500
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "SHAKSHA",
+      "price": 1500
+    },
+    {
+      "from": "DEMA",
+      "to": "SHAKSHA",
+      "price": 1300
+    },
+    {
+      "from": "AVDON",
+      "to": "SHAKSHA",
+      "price": 1650
+    },
+    {
+      "from": "UPTINO",
+      "to": "SHAKSHA",
+      "price": 1750
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "AKBERDINO",
+      "price": 1400
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "AKBERDINO",
+      "price": 1400
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "AKBERDINO",
+      "price": 1400
+    },
+    {
+      "from": "DEMA",
+      "to": "AKBERDINO",
+      "price": 1200
+    },
+    {
+      "from": "AVDON",
+      "to": "AKBERDINO",
+      "price": 1550
+    },
+    {
+      "from": "UPTINO",
+      "to": "AKBERDINO",
+      "price": 1650
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "NAGAEVO",
+      "price": 1200
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "NAGAEVO",
+      "price": 1200
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "NAGAEVO",
+      "price": 1200
+    },
+    {
+      "from": "DEMA",
+      "to": "NAGAEVO",
+      "price": 1000
+    },
+    {
+      "from": "AVDON",
+      "to": "NAGAEVO",
+      "price": 1350
+    },
+    {
+      "from": "UPTINO",
+      "to": "NAGAEVO",
+      "price": 1450
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "CHISHMY",
+      "price": 1200
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "CHISHMY",
+      "price": 1200
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "CHISHMY",
+      "price": 1200
+    },
+    {
+      "from": "DEMA",
+      "to": "CHISHMY",
+      "price": 1000
+    },
+    {
+      "from": "AVDON",
+      "to": "CHISHMY",
+      "price": 1350
+    },
+    {
+      "from": "UPTINO",
+      "to": "CHISHMY",
+      "price": 1450
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "ALKINO",
+      "price": 700
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "ALKINO",
+      "price": 700
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "ALKINO",
+      "price": 700
+    },
+    {
+      "from": "DEMA",
+      "to": "ALKINO",
+      "price": 850
+    },
+    {
+      "from": "AVDON",
+      "to": "ALKINO",
+      "price": 750
+    },
+    {
+      "from": "UPTINO",
+      "to": "ALKINO",
+      "price": 950
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "YUMATOVO",
+      "price": 600
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "YUMATOVO",
+      "price": 600
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "YUMATOVO",
+      "price": 600
+    },
+    {
+      "from": "DEMA",
+      "to": "YUMATOVO",
+      "price": 650
+    },
+    {
+      "from": "AVDON",
+      "to": "YUMATOVO",
+      "price": 600
+    },
+    {
+      "from": "UPTINO",
+      "to": "YUMATOVO",
+      "price": 850
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "CAFE_REST",
+      "price": 650
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "CAFE_REST",
+      "price": 650
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "CAFE_REST",
+      "price": 650
+    },
+    {
+      "from": "DEMA",
+      "to": "CAFE_REST",
+      "price": 450
+    },
+    {
+      "from": "AVDON",
+      "to": "CAFE_REST",
+      "price": 800
+    },
+    {
+      "from": "UPTINO",
+      "to": "CAFE_REST",
+      "price": 900
+    },
+    {
+      "from": "RAILWAY_STATION",
+      "to": "STARY_ZHUKOVO",
+      "price": 1000
+    },
+    {
+      "from": "RAILWAY_STATION",
+      "to": "NOVY_ZHUKOVO",
+      "price": 1000
+    },
+    {
+      "from": "RAILWAY_STATION",
+      "to": "MYSOVCEVO",
+      "price": 1000
+    },
+    {
+      "from": "RAILWAY_STATION",
+      "to": "DEMA",
+      "price": 800
+    },
+    {
+      "from": "RAILWAY_STATION",
+      "to": "AVDON",
+      "price": 1000
+    },
+    {
+      "from": "RAILWAY_STATION",
+      "to": "UPTINO",
+      "price": 1250
+    },
+    {
+      "from": "DMITRIEVKA",
+      "to": "STARY_ZHUKOVO",
+      "price": 700
+    },
+    {
+      "from": "DMITRIEVKA",
+      "to": "NOVY_ZHUKOVO",
+      "price": 700
+    },
+    {
+      "from": "DMITRIEVKA",
+      "to": "MYSOVCEVO",
+      "price": 700
+    },
+    {
+      "from": "DMITRIEVKA",
+      "to": "DEMA",
+      "price": 500
+    },
+    {
+      "from": "DMITRIEVKA",
+      "to": "AVDON",
+      "price": 850
+    },
+    {
+      "from": "DMITRIEVKA",
+      "to": "UPTINO",
+      "price": 950
+    },
+    {
+      "from": "MIKHAYLOVKA",
+      "to": "STARY_ZHUKOVO",
+      "price": 750
+    },
+    {
+      "from": "MIKHAYLOVKA",
+      "to": "NOVY_ZHUKOVO",
+      "price": 750
+    },
+    {
+      "from": "MIKHAYLOVKA",
+      "to": "MYSOVCEVO",
+      "price": 750
+    },
+    {
+      "from": "MIKHAYLOVKA",
+      "to": "DEMA",
+      "price": 550
+    },
+    {
+      "from": "MIKHAYLOVKA",
+      "to": "AVDON",
+      "price": 900
+    },
+    {
+      "from": "MIKHAYLOVKA",
+      "to": "UPTINO",
+      "price": 1000
+    },
+    {
+      "from": "MILOVSKY_PARK",
+      "to": "STARY_ZHUKOVO",
+      "price": 550
+    },
+    {
+      "from": "MILOVSKY_PARK",
+      "to": "NOVY_ZHUKOVO",
+      "price": 550
+    },
+    {
+      "from": "MILOVSKY_PARK",
+      "to": "MYSOVCEVO",
+      "price": 550
+    },
+    {
+      "from": "MILOVSKY_PARK",
+      "to": "DEMA",
+      "price": 350
+    },
+    {
+      "from": "MILOVSKY_PARK",
+      "to": "AVDON",
+      "price": 700
+    },
+    {
+      "from": "MILOVSKY_PARK",
+      "to": "UPTINO",
+      "price": 800
+    },
+    {
+      "from": "MILOVKA",
+      "to": "STARY_ZHUKOVO",
+      "price": 600
+    },
+    {
+      "from": "MILOVKA",
+      "to": "NOVY_ZHUKOVO",
+      "price": 600
+    },
+    {
+      "from": "MILOVKA",
+      "to": "MYSOVCEVO",
+      "price": 600
+    },
+    {
+      "from": "MILOVKA",
+      "to": "DEMA",
+      "price": 400
+    },
+    {
+      "from": "MILOVKA",
+      "to": "AVDON",
+      "price": 750
+    },
+    {
+      "from": "MILOVKA",
+      "to": "UPTINO",
+      "price": 850
+    },
+    {
+      "from": "NIKOLAEVKA",
+      "to": "STARY_ZHUKOVO",
+      "price": 800
+    },
+    {
+      "from": "NIKOLAEVKA",
+      "to": "NOVY_ZHUKOVO",
+      "price": 800
+    },
+    {
+      "from": "NIKOLAEVKA",
+      "to": "MYSOVCEVO",
+      "price": 800
+    },
+    {
+      "from": "NIKOLAEVKA",
+      "to": "DEMA",
+      "price": 600
+    },
+    {
+      "from": "NIKOLAEVKA",
+      "to": "AVDON",
+      "price": 950
+    },
+    {
+      "from": "NIKOLAEVKA",
+      "to": "UPTINO",
+      "price": 1050
+    },
+    {
+      "from": "IGLINO",
+      "to": "STARY_ZHUKOVO",
+      "price": 1700
+    },
+    {
+      "from": "IGLINO",
+      "to": "NOVY_ZHUKOVO",
+      "price": 1700
+    },
+    {
+      "from": "IGLINO",
+      "to": "MYSOVCEVO",
+      "price": 1700
+    },
+    {
+      "from": "IGLINO",
+      "to": "DEMA",
+      "price": 1500
+    },
+    {
+      "from": "IGLINO",
+      "to": "AVDON",
+      "price": 1850
+    },
+    {
+      "from": "IGLINO",
+      "to": "UPTINO",
+      "price": 1950
+    },
+    {
+      "from": "SHAKSHA",
+      "to": "STARY_ZHUKOVO",
+      "price": 1500
+    },
+    {
+      "from": "SHAKSHA",
+      "to": "NOVY_ZHUKOVO",
+      "price": 1500
+    },
+    {
+      "from": "SHAKSHA",
+      "to": "MYSOVCEVO",
+      "price": 1500
+    },
+    {
+      "from": "SHAKSHA",
+      "to": "DEMA",
+      "price": 1300
+    },
+    {
+      "from": "SHAKSHA",
+      "to": "AVDON",
+      "price": 1650
+    },
+    {
+      "from": "SHAKSHA",
+      "to": "UPTINO",
+      "price": 1750
+    },
+    {
+      "from": "AKBERDINO",
+      "to": "STARY_ZHUKOVO",
+      "price": 1400
+    },
+    {
+      "from": "AKBERDINO",
+      "to": "NOVY_ZHUKOVO",
+      "price": 1400
+    },
+    {
+      "from": "AKBERDINO",
+      "to": "MYSOVCEVO",
+      "price": 1400
+    },
+    {
+      "from": "AKBERDINO",
+      "to": "DEMA",
+      "price": 1200
+    },
+    {
+      "from": "AKBERDINO",
+      "to": "AVDON",
+      "price": 1550
+    },
+    {
+      "from": "AKBERDINO",
+      "to": "UPTINO",
+      "price": 1650
+    },
+    {
+      "from": "NAGAEVO",
+      "to": "STARY_ZHUKOVO",
+      "price": 1200
+    },
+    {
+      "from": "NAGAEVO",
+      "to": "NOVY_ZHUKOVO",
+      "price": 1200
+    },
+    {
+      "from": "NAGAEVO",
+      "to": "MYSOVCEVO",
+      "price": 1200
+    },
+    {
+      "from": "NAGAEVO",
+      "to": "DEMA",
+      "price": 1000
+    },
+    {
+      "from": "NAGAEVO",
+      "to": "AVDON",
+      "price": 1350
+    },
+    {
+      "from": "NAGAEVO",
+      "to": "UPTINO",
+      "price": 1450
+    },
+    {
+      "from": "CHISHMY",
+      "to": "STARY_ZHUKOVO",
+      "price": 1200
+    },
+    {
+      "from": "CHISHMY",
+      "to": "NOVY_ZHUKOVO",
+      "price": 1200
+    },
+    {
+      "from": "CHISHMY",
+      "to": "MYSOVCEVO",
+      "price": 1200
+    },
+    {
+      "from": "CHISHMY",
+      "to": "DEMA",
+      "price": 1000
+    },
+    {
+      "from": "CHISHMY",
+      "to": "AVDON",
+      "price": 1350
+    },
+    {
+      "from": "CHISHMY",
+      "to": "UPTINO",
+      "price": 1450
+    },
+    {
+      "from": "ALKINO",
+      "to": "STARY_ZHUKOVO",
+      "price": 700
+    },
+    {
+      "from": "ALKINO",
+      "to": "NOVY_ZHUKOVO",
+      "price": 700
+    },
+    {
+      "from": "ALKINO",
+      "to": "MYSOVCEVO",
+      "price": 700
+    },
+    {
+      "from": "ALKINO",
+      "to": "DEMA",
+      "price": 850
+    },
+    {
+      "from": "ALKINO",
+      "to": "AVDON",
+      "price": 750
+    },
+    {
+      "from": "ALKINO",
+      "to": "UPTINO",
+      "price": 950
+    },
+    {
+      "from": "YUMATOVO",
+      "to": "STARY_ZHUKOVO",
+      "price": 600
+    },
+    {
+      "from": "YUMATOVO",
+      "to": "NOVY_ZHUKOVO",
+      "price": 600
+    },
+    {
+      "from": "YUMATOVO",
+      "to": "MYSOVCEVO",
+      "price": 600
+    },
+    {
+      "from": "YUMATOVO",
+      "to": "DEMA",
+      "price": 650
+    },
+    {
+      "from": "YUMATOVO",
+      "to": "AVDON",
+      "price": 600
+    },
+    {
+      "from": "YUMATOVO",
+      "to": "UPTINO",
+      "price": 850
+    },
+    {
+      "from": "CAFE_REST",
+      "to": "STARY_ZHUKOVO",
+      "price": 650
+    },
+    {
+      "from": "CAFE_REST",
+      "to": "NOVY_ZHUKOVO",
+      "price": 650
+    },
+    {
+      "from": "CAFE_REST",
+      "to": "MYSOVCEVO",
+      "price": 650
+    },
+    {
+      "from": "CAFE_REST",
+      "to": "DEMA",
+      "price": 450
+    },
+    {
+      "from": "CAFE_REST",
+      "to": "AVDON",
+      "price": 800
+    },
+    {
+      "from": "CAFE_REST",
+      "to": "UPTINO",
+      "price": 900
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "ZATON",
+      "price": 700
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "ZATON",
+      "price": 650
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "ZATON",
+      "price": 750
+    },
+    {
+      "from": "ZATON",
+      "to": "STARY_ZHUKOVO",
+      "price": 700
+    },
+    {
+      "from": "ZATON",
+      "to": "NOVY_ZHUKOVO",
+      "price": 650
+    },
+    {
+      "from": "ZATON",
+      "to": "MYSOVCEVO",
+      "price": 750
+    },
+    {
+      "from": "AVDON",
+      "to": "ZATON",
+      "price": 800
+    },
+    {
+      "from": "ZATON",
+      "to": "AVDON",
+      "price": 800
+    },
+    {
+      "from": "AVDON",
+      "to": "UPTINO",
+      "price": 500
+    },
+    {
+      "from": "UPTINO",
+      "to": "AVDON",
+      "price": 500
+    },
+    {
+      "from": "AVDON",
+      "to": "SERGEEVKA",
+      "price": 450
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "AVDON",
+      "price": 400
+    },
+    {
+      "from": "AVDON",
+      "to": "DEMA",
+      "price": 500
+    },
+    {
+      "from": "DEMA",
+      "to": "AVDON",
+      "price": 500
+    },
+    {
+      "from": "AVDON",
+      "to": "MEGA",
+      "price": 800
+    },
+    {
+      "from": "MEGA",
+      "to": "AVDON",
+      "price": 800
+    },
+    {
+      "from": "AVDON",
+      "to": "YARKIY",
+      "price": 550
+    },
+    {
+      "from": "YARKIY",
+      "to": "AVDON",
+      "price": 550
+    },
+    {
+      "from": "AVDON",
+      "to": "VIETNAM_MARKET",
+      "price": 600
+    },
+    {
+      "from": "VIETNAM_MARKET",
+      "to": "AVDON",
+      "price": 600
+    },
+    {
+      "from": "AVDON",
+      "to": "PO_AVDON",
+      "price": 250
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "DEMA",
+      "price": 450
+    },
+    {
+      "from": "DEMA",
+      "to": "SERGEEVKA",
+      "price": 450
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "STARY_ZHUKOVO",
+      "price": 400
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "SERGEEVKA",
+      "price": 400
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "NOVY_ZHUKOVO",
+      "price": 450
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "SERGEEVKA",
+      "price": 450
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "PO_SERGEEVKA",
+      "price": 250
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "UFA_CENTER",
+      "price": 850
+    },
+    {
+      "from": "UFA_CENTER",
+      "to": "SERGEEVKA",
+      "price": 850
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "UFA_ZELENAYA_ROSCHA",
+      "price": 850
+    },
+    {
+      "from": "UFA_ZELENAYA_ROSCHA",
+      "to": "SERGEEVKA",
+      "price": 850
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "UFA_INORS",
+      "price": 1200
+    },
+    {
+      "from": "UFA_INORS",
+      "to": "SERGEEVKA",
+      "price": 1200
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "UFA_CHERNIK",
+      "price": 1200
+    },
+    {
+      "from": "UFA_CHERNIK",
+      "to": "SERGEEVKA",
+      "price": 1200
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "PROSPEKT_OKTYABRYA",
+      "price": 1000
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA",
+      "to": "SERGEEVKA",
+      "price": 1000
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "AIRPORT",
+      "price": 1100
+    },
+    {
+      "from": "AIRPORT",
+      "to": "SERGEEVKA",
+      "price": 1100
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "RAILWAY_STATION",
+      "price": 1000
+    },
+    {
+      "from": "RAILWAY_STATION",
+      "to": "SERGEEVKA",
+      "price": 1000
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "UPTINO",
+      "price": 550
+    },
+    {
+      "from": "UPTINO",
+      "to": "SERGEEVKA",
+      "price": 550
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "YUMATOVO",
+      "price": 650
+    },
+    {
+      "from": "YUMATOVO",
+      "to": "SERGEEVKA",
+      "price": 650
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "ALKINO",
+      "price": 800
+    },
+    {
+      "from": "ALKINO",
+      "to": "SERGEEVKA",
+      "price": 800
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "ZATON",
+      "price": 750
+    },
+    {
+      "from": "ZATON",
+      "to": "SERGEEVKA",
+      "price": 750
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "YARKIY",
+      "price": 500
+    },
+    {
+      "from": "YARKIY",
+      "to": "SERGEEVKA",
+      "price": 500
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "VIETNAM_MARKET",
+      "price": 550
+    },
+    {
+      "from": "VIETNAM_MARKET",
+      "to": "SERGEEVKA",
+      "price": 550
+    },
+    {
+      "from": "DEMA",
+      "to": "PO_DEMA",
+      "price": 250
+    },
+    {
+      "from": "DEMA",
+      "to": "YARKIY",
+      "price": 300
+    },
+    {
+      "from": "YARKIY",
+      "to": "DEMA",
+      "price": 300
+    },
+    {
+      "from": "DEMA",
+      "to": "VIETNAM_MARKET",
+      "price": 350
+    },
+    {
+      "from": "VIETNAM_MARKET",
+      "to": "DEMA",
+      "price": 350
+    },
+    {
+      "from": "DEMA",
+      "to": "UPTINO",
+      "price": 550
+    },
+    {
+      "from": "UPTINO",
+      "to": "DEMA",
+      "price": 550
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "MEGA",
+      "price": 600
+    },
+    {
+      "from": "MEGA",
+      "to": "NOVY_ZHUKOVO",
+      "price": 600
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "MEGA",
+      "price": 650
+    },
+    {
+      "from": "MEGA",
+      "to": "STARY_ZHUKOVO",
+      "price": 650
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "MEGA",
+      "price": 700
+    },
+    {
+      "from": "MEGA",
+      "to": "MYSOVCEVO",
+      "price": 700
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "VIETNAM_MARKET",
+      "price": 550
+    },
+    {
+      "from": "VIETNAM_MARKET",
+      "to": "NOVY_ZHUKOVO",
+      "price": 550
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "VIETNAM_MARKET",
+      "price": 600
+    },
+    {
+      "from": "VIETNAM_MARKET",
+      "to": "STARY_ZHUKOVO",
+      "price": 600
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "VIETNAM_MARKET",
+      "price": 650
+    },
+    {
+      "from": "VIETNAM_MARKET",
+      "to": "MYSOVCEVO",
+      "price": 650
+    },
+    {
+      "from": "AVDON",
+      "to": "PO_AVDON",
+      "price": 250
+    },
+    {
+      "from": "DEMA",
+      "to": "PROSPEKT_OKTYABRYA_GALLE",
+      "price": 500
+    },
+    {
+      "from": "DEMA",
+      "to": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "price": 600
+    },
+    {
+      "from": "DEMA",
+      "to": "PROSPEKT_OKTYABRYA_GDK",
+      "price": 700
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GALLE",
+      "to": "DEMA",
+      "price": 500
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "to": "DEMA",
+      "price": 600
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GDK",
+      "to": "DEMA",
+      "price": 700
+    },
+    {
+      "from": "AVDON",
+      "to": "PROSPEKT_OKTYABRYA_GALLE",
+      "price": 800
+    },
+    {
+      "from": "AVDON",
+      "to": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "price": 900
+    },
+    {
+      "from": "AVDON",
+      "to": "PROSPEKT_OKTYABRYA_GDK",
+      "price": 1000
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GALLE",
+      "to": "AVDON",
+      "price": 800
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "to": "AVDON",
+      "price": 900
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GDK",
+      "to": "AVDON",
+      "price": 1000
+    },
+    {
+      "from": "UPTINO",
+      "to": "PROSPEKT_OKTYABRYA_GALLE",
+      "price": 800
+    },
+    {
+      "from": "UPTINO",
+      "to": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "price": 900
+    },
+    {
+      "from": "UPTINO",
+      "to": "PROSPEKT_OKTYABRYA_GDK",
+      "price": 1000
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GALLE",
+      "to": "UPTINO",
+      "price": 800
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "to": "UPTINO",
+      "price": 900
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GDK",
+      "to": "UPTINO",
+      "price": 1000
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "PROSPEKT_OKTYABRYA_GALLE",
+      "price": 900
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "price": 1000
+    },
+    {
+      "from": "STARY_ZHUKOVO",
+      "to": "PROSPEKT_OKTYABRYA_GDK",
+      "price": 1100
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GALLE",
+      "to": "STARY_ZHUKOVO",
+      "price": 900
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "to": "STARY_ZHUKOVO",
+      "price": 1000
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GDK",
+      "to": "STARY_ZHUKOVO",
+      "price": 1100
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "PROSPEKT_OKTYABRYA_GALLE",
+      "price": 800
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "price": 900
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "PROSPEKT_OKTYABRYA_GDK",
+      "price": 1000
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GALLE",
+      "to": "NOVY_ZHUKOVO",
+      "price": 800
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "to": "NOVY_ZHUKOVO",
+      "price": 900
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GDK",
+      "to": "NOVY_ZHUKOVO",
+      "price": 1000
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "PROSPEKT_OKTYABRYA_GALLE",
+      "price": 900
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "price": 1000
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "PROSPEKT_OKTYABRYA_GDK",
+      "price": 1100
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GALLE",
+      "to": "MYSOVCEVO",
+      "price": 900
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "to": "MYSOVCEVO",
+      "price": 1000
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GDK",
+      "to": "MYSOVCEVO",
+      "price": 1100
+    },
+    {
+      "from": "UFA_CENTER",
+      "to": "UPTINO",
+      "price": 800
+    },
+    {
+      "from": "UFA_TELECENTER",
+      "to": "UPTINO",
+      "price": 800
+    },
+    {
+      "from": "UFA_SIPAYLOVO",
+      "to": "UPTINO",
+      "price": 1000
+    },
+    {
+      "from": "UFA_CHERNIK",
+      "to": "UPTINO",
+      "price": 1200
+    },
+    {
+      "from": "UFA_CHESNOK",
+      "to": "UPTINO",
+      "price": 900
+    },
+    {
+      "from": "UFA_CENTER",
+      "to": "MYSOVCEVO",
+      "price": 750
+    },
+    {
+      "from": "UFA_TELECENTER",
+      "to": "MYSOVCEVO",
+      "price": 700
+    },
+    {
+      "from": "UFA_SIPAYLOVO",
+      "to": "MYSOVCEVO",
+      "price": 1000
+    },
+    {
+      "from": "UFA_CHERNIK",
+      "to": "MYSOVCEVO",
+      "price": 1250
+    },
+    {
+      "from": "UFA_CHESNOK",
+      "to": "MYSOVCEVO",
+      "price": 800
+    },
+    {
+      "from": "UFA_CHESNOK",
+      "to": "NOVY_ZHUKOVO",
+      "price": 800
+    },
+    {
+      "from": "UFA_CHESNOK",
+      "to": "STARY_ZHUKOVO",
+      "price": 800
+    },
+    {
+      "from": "UFA_CHESNOK",
+      "to": "AVDON",
+      "price": 900
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "UFA_CHESNOK",
+      "price": 900
+    },
+    {
+      "from": "UFA_CHESNOK",
+      "to": "SERGEEVKA",
+      "price": 900
+    },
+    {
+      "from": "UFA_CHESNOK",
+      "to": "DEMA",
+      "price": 500
+    },
+    {
+      "from": "UFA_INORS",
+      "to": "UPTINO",
+      "price": 1200
+    },
+    {
+      "from": "UFA_ZELENAYA_ROSCHA",
+      "to": "UPTINO",
+      "price": 800
+    },
+    {
+      "from": "UFA_INORS",
+      "to": "MYSOVCEVO",
+      "price": 950
+    },
+    {
+      "from": "UFA_ZELENAYA_ROSCHA",
+      "to": "MYSOVCEVO",
+      "price": 900
+    }
+  ]
+}
