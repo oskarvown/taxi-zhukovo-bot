@@ -11,3 +11,5 @@ cd /Volumes/PortableSSD/TAXI_ЖУКОВО
 
 
 
+
+

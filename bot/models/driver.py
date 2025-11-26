@@ -25,6 +25,7 @@ class DriverZone(str, Enum):
     AVDON = "AVDON"
     UPTINO = "UPTINO"
     DEMA = "DEMA"
+    SERGEEVKA = "SERGEEVKA"
 
 
 class Driver(Base):

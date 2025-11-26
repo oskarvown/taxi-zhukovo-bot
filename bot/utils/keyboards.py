@@ -133,9 +133,10 @@ class Keyboards:
             [KeyboardButton("Старое Жуково"), KeyboardButton("Новое Жуково")],
             [KeyboardButton("Мысовцево"), KeyboardButton("Авдон")],
             [KeyboardButton("Дёма"), KeyboardButton("Уптино")],
-            [KeyboardButton("Аэропорт"), KeyboardButton("Ж/Д вокзал")],
-            [KeyboardButton("Уфа")],
-            [KeyboardButton("По Жуково"), KeyboardButton("По Дёме"), KeyboardButton("По Авдону")],
+            [KeyboardButton("Сергеевка"), KeyboardButton("Аэропорт")],
+            [KeyboardButton("Ж/Д вокзал"), KeyboardButton("Уфа")],
+            [KeyboardButton("По Жуково"), KeyboardButton("По Дёме")],
+            [KeyboardButton("По Авдону"), KeyboardButton("По Сергеевке")],
             [KeyboardButton("Прочие направления"), KeyboardButton("❌ Отмена")]
         ]
         return ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
@@ -225,7 +226,7 @@ class Keyboards:
             [KeyboardButton("Миловский Парк"), KeyboardButton("Миловка")],
             [KeyboardButton("Николаевка"), KeyboardButton("Юматово")],
             [KeyboardButton("Алкино"), KeyboardButton("Кафе Отдых")],
-            [KeyboardButton("Сергеевка"), KeyboardButton("Чесноковка")],
+            [KeyboardButton("Чесноковка"), KeyboardButton("Затон")],
             [KeyboardButton("Иглино"), KeyboardButton("Шакша")],
             [KeyboardButton("Акбердино"), KeyboardButton("Нагаево")],
             [KeyboardButton("Чишмы")],
@@ -288,8 +289,9 @@ class Keyboards:
         """Выбор района для водителя"""
         keyboard = [
             [KeyboardButton("📍 Новое Жуково"), KeyboardButton("📍 Старое Жуково")],
-            [KeyboardButton("📍 Мысовцево"), KeyboardButton("📍 Авдон")],
-            [KeyboardButton("📍 Уптино"), KeyboardButton("📍 Дёма")],
+            [KeyboardButton("📍 Мысовцево"), KeyboardButton("📍 Дёма")],
+            [KeyboardButton("📍 Авдон"), KeyboardButton("📍 Уптино")],
+            [KeyboardButton("📍 Сергеевка")],
             [KeyboardButton("🔙 Назад")]
         ]
         return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)

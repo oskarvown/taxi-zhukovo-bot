@@ -54,6 +54,7 @@ class OrderZone(str, Enum):
     AVDON = "AVDON"
     UPTINO = "UPTINO"
     DEMA = "DEMA"
+    SERGEEVKA = "SERGEEVKA"
 
 
 class OrderTariff(str, Enum):

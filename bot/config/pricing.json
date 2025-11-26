@@ -1658,6 +1658,46 @@
       "price": 300
     },
     {
+      "from": "STARY_ZHUKOVO",
+      "to": "YARKIY",
+      "price": 500
+    },
+    {
+      "from": "YARKIY",
+      "to": "STARY_ZHUKOVO",
+      "price": 500
+    },
+    {
+      "from": "NOVY_ZHUKOVO",
+      "to": "YARKIY",
+      "price": 450
+    },
+    {
+      "from": "YARKIY",
+      "to": "NOVY_ZHUKOVO",
+      "price": 450
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "YARKIY",
+      "price": 550
+    },
+    {
+      "from": "YARKIY",
+      "to": "MYSOVCEVO",
+      "price": 550
+    },
+    {
+      "from": "UPTINO",
+      "to": "YARKIY",
+      "price": 600
+    },
+    {
+      "from": "YARKIY",
+      "to": "UPTINO",
+      "price": 600
+    },
+    {
       "from": "DEMA",
       "to": "VIETNAM_MARKET",
       "price": 350
@@ -2021,6 +2061,76 @@
       "from": "UFA_ZELENAYA_ROSCHA",
       "to": "MYSOVCEVO",
       "price": 900
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "MYSOVCEVO",
+      "price": 500
+    },
+    {
+      "from": "MYSOVCEVO",
+      "to": "SERGEEVKA",
+      "price": 500
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "MEGA",
+      "price": 750
+    },
+    {
+      "from": "MEGA",
+      "to": "SERGEEVKA",
+      "price": 750
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "UFA_TELECENTER",
+      "price": 800
+    },
+    {
+      "from": "UFA_TELECENTER",
+      "to": "SERGEEVKA",
+      "price": 800
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "UFA_SIPAYLOVO",
+      "price": 1000
+    },
+    {
+      "from": "UFA_SIPAYLOVO",
+      "to": "SERGEEVKA",
+      "price": 1000
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "PROSPEKT_OKTYABRYA_GALLE",
+      "price": 900
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GALLE",
+      "to": "SERGEEVKA",
+      "price": 900
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "price": 1000
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GORSOVET",
+      "to": "SERGEEVKA",
+      "price": 1000
+    },
+    {
+      "from": "SERGEEVKA",
+      "to": "PROSPEKT_OKTYABRYA_GDK",
+      "price": 1100
+    },
+    {
+      "from": "PROSPEKT_OKTYABRYA_GDK",
+      "to": "SERGEEVKA",
+      "price": 1100
     }
   ]
 }

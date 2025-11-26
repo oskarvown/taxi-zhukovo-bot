@@ -41,6 +41,7 @@ def map_district_to_zone(district: str) -> str:
         "уптино": "UPTINO",
         "дёма": "DEMA",
         "дема": "DEMA",
+        "сергеевка": "SERGEEVKA",
     }
     
     for key, value in mappings.items():

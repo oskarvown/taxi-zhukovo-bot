@@ -89,7 +89,7 @@ async def driver_select_district_handler(update: Update, context: ContextTypes.D
             return
         
         # Проверяем, что выбран валидный район
-        districts = ["📍 Новое Жуково", "📍 Старое Жуково", "📍 Мысовцево", "📍 Авдон", "📍 Уптино", "📍 Дёма"]
+        districts = ["📍 Новое Жуково", "📍 Старое Жуково", "📍 Мысовцево", "📍 Авдон", "📍 Уптино", "📍 Дёма", "📍 Сергеевка"]
         
         if update.message.text == "🔙 Назад":
             await update.message.reply_text(
@@ -707,7 +707,7 @@ def register_driver_handlers(application: Application):
     
     # Выбор зоны водителем (новая система)
     application.add_handler(MessageHandler(
-        filters.Regex('^📍 (Новое Жуково|Старое Жуково|Мысовцево|Авдон|Уптино|Дёма)$'),
+        filters.Regex('^📍 (Новое Жуково|Старое Жуково|Мысовцево|Авдон|Уптино|Дёма|Сергеевка)$'),
         driver_select_zone_handler
     ))
     application.add_handler(MessageHandler(filters.Regex('^🔙 Назад$'), driver_select_zone_handler))

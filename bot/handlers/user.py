@@ -441,54 +441,6 @@ async def district_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data.pop('pickup_submenu', None)
         return Keyboards.select_district()
 
-    if submenu == 'prospekt_oktyabrya':
-        context.user_data['pickup_mode'] = None
-        if text == "⬅️ Назад":
-            context.user_data['pickup_submenu'] = 'ufa'
-            await update.message.reply_text(
-                "📍 <b>Выберите район Уфы:</b>",
-                parse_mode='HTML',
-                reply_markup=Keyboards.select_ufa_pickup()
-            )
-            return SELECT_DISTRICT
-
-        prospekt_options = {
-            "Галле": "Проспект Октября — Галле",
-            "Горсовет": "Проспект Октября — Горсовет",
-            "ГДК": "Проспект Октября — ГДК"
-        }
-
-        if text not in prospekt_options:
-            await update.message.reply_text(
-                "⚠️ Пожалуйста, выберите точку из списка ниже:",
-                reply_markup=Keyboards.select_prospekt_oktyabrya_submenu()
-            )
-            return SELECT_DISTRICT
-
-        selected_district = prospekt_options[text]
-        zone_id = PricingService.get_zone_id_by_name(selected_district)
-        context.user_data.pop('pickup_submenu', None)
-        if not zone_id:
-            await update.message.reply_text(
-                "❌ Не удалось определить выбранную точку. Попробуйте выбрать заново.",
-                reply_markup=Keyboards.select_prospekt_oktyabrya_submenu()
-            )
-            return SELECT_DISTRICT
-
-        context.user_data['pickup_district'] = selected_district
-        context.user_data['pickup_zone_id'] = zone_id
-        context.user_data['is_from_other_destination'] = False
-        
-        # Запрашиваем адрес
-        await update.message.reply_text(
-            f"✅ <b>Район: {selected_district}</b>\n\n"
-            "📍 Теперь укажите <b>точный адрес отправления</b> текстом.\n\n"
-            "Например: «Проспект Октября, 15» или «возле ТЦ Галле».",
-            parse_mode='HTML',
-            reply_markup=Keyboards.manual_input_with_cancel()
-        )
-        return PICKUP_ADDRESS
-
     if submenu == 'ufa':
         context.user_data['pickup_mode'] = None
         if text == "🔙 Назад":
@@ -506,19 +458,8 @@ async def district_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Черниковка": "Черниковка",
             "Инорс": "Инорс",
             "Зелёная роща": "Зелёная роща",
-            "Чесноковка": "Чесноковка",
             "Проспект Октября": "Проспект Октября"
         }
-
-        # Обработка "Проспект Октября" - открываем подменю
-        if text == "Проспект Октября":
-            context.user_data['pickup_submenu'] = 'prospekt_oktyabrya'
-            await update.message.reply_text(
-                "📍 <b>Выберите точку на Проспекте Октября:</b>",
-                parse_mode='HTML',
-                reply_markup=Keyboards.select_prospekt_oktyabrya_submenu()
-            )
-            return SELECT_DISTRICT
 
         if text not in ufa_options:
             await update.message.reply_text(
@@ -770,6 +711,29 @@ async def district_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             return PICKUP_ADDRESS
 
+        if text == "По Сергеевке":
+            context.user_data['pickup_mode'] = 'po_sergeevka'
+            context.user_data['pickup_district'] = "Сергеевка"
+            zone_id = PricingService.get_zone_id_by_name("Сергеевка")
+            if not zone_id:
+                await update.message.reply_text(
+                    "❌ Не удалось определить район Сергеевка. Попробуйте выбрать заново.",
+                    reply_markup=Keyboards.select_district()
+                )
+                return SELECT_DISTRICT
+            
+            context.user_data['pickup_zone_id'] = zone_id
+            context.user_data['is_from_other_destination'] = False
+            
+            await update.message.reply_text(
+                "✅ <b>Район: Сергеевка (по району)</b>\n\n"
+                "📍 Укажите <b>точный адрес отправления</b> текстом.\n\n"
+                "Например: «ул. Ленина, 10» или «Сергеевка, ул. Советская 25».",
+                parse_mode='HTML',
+                reply_markup=Keyboards.manual_input_with_cancel()
+            )
+            return PICKUP_ADDRESS
+
         # Обработка кнопки "Аэропорт" -> переход в подменю терминалов
         if text == "Аэропорт":
             context.user_data['pickup_submenu'] = 'airport'
@@ -799,6 +763,7 @@ async def district_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Авдон": "Авдон",
             "Уптино": "Уптино",
             "Дёма": "Дёма",
+            "Сергеевка": "Сергеевка",
             "Ж/Д вокзал": "Ж/Д вокзал"
         }
 
@@ -859,7 +824,7 @@ async def pickup_address_handler(update: Update, context: ContextTypes.DEFAULT_T
     context.user_data['pickup_lon'] = None
 
     pickup_mode = context.user_data.get('pickup_mode')
-    if pickup_mode in ['po_zhukovo', 'po_dema', 'po_avdon']:
+    if pickup_mode in ['po_zhukovo', 'po_dema', 'po_avdon', 'po_sergeevka']:
         pickup_zone_id = context.user_data.get('pickup_zone_id')
         if not pickup_zone_id:
             await update.message.reply_text(
@@ -875,9 +840,12 @@ async def pickup_address_handler(update: Update, context: ContextTypes.DEFAULT_T
         elif pickup_mode == 'po_dema':
             destination_zone_name = "По Дёме"
             district_label = "Дёме"
-        else:  # po_avdon
+        elif pickup_mode == 'po_avdon':
             destination_zone_name = "По Авдону"
             district_label = "Авдону"
+        else:  # po_sergeevka
+            destination_zone_name = "По Сергеевке"
+            district_label = "Сергеевке"
 
         destination_zone_id = PricingService.get_zone_id_by_name(destination_zone_name)
         if not destination_zone_id:
@@ -967,8 +935,8 @@ async def destination_zone_handler(update: Update, context: ContextTypes.DEFAULT
         )
         return SELECT_DISTRICT
     
-    # Валидация: "По Жуково", "По Дёме", "По Авдону" недоступны как назначение
-    if message_text in ["По Жуково", "По Дёме", "По Авдону"]:
+    # Валидация: "По Жуково", "По Дёме", "По Авдону", "По Сергеевке" недоступны как назначение
+    if message_text in ["По Жуково", "По Дёме", "По Авдону", "По Сергеевке"]:
         is_from_other = context.user_data.get('is_from_other_destination', False)
         keyboard = Keyboards.select_destination_from_other() if is_from_other else Keyboards.select_destination_zone()
         await update.message.reply_text(
@@ -1021,26 +989,24 @@ async def destination_zone_handler(update: Update, context: ContextTypes.DEFAULT
             )
             return SELECT_DESTINATION
         
+        # Обработка "Проспект Октября" - переход в подменю
+        if message_text == "Проспект Октября":
+            context.user_data['destination_submenu'] = 'prospekt_oktyabrya'
+            await update.message.reply_text(
+                "🏛 <b>Выберите точку на Проспекте Октября:</b>",
+                parse_mode='HTML',
+                reply_markup=Keyboards.select_prospekt_oktyabrya_submenu()
+            )
+            return SELECT_DESTINATION
+        
         ufa_destinations = [
             "Уфа-Центр",
             "Телецентр",
             "Сипайлово",
             "Черниковка",
             "Инорс",
-            "Зелёная роща",
-            "Чесноковка",
-            "Проспект Октября"
+            "Зелёная роща"
         ]
-        
-        # Обработка "Проспект Октября" - открываем подменю
-        if message_text == "Проспект Октября":
-            context.user_data['destination_submenu'] = 'prospekt_oktyabrya'
-            await update.message.reply_text(
-                "📍 <b>Выберите точку на Проспекте Октября:</b>",
-                parse_mode='HTML',
-                reply_markup=Keyboards.select_prospekt_oktyabrya_submenu()
-            )
-            return SELECT_DESTINATION
         
         if message_text not in ufa_destinations:
             await update.message.reply_text(
@@ -1052,35 +1018,6 @@ async def destination_zone_handler(update: Update, context: ContextTypes.DEFAULT
         # Район Уфы выбран, очищаем submenu и продолжаем обработку
         context.user_data.pop('destination_submenu', None)
         # message_text содержит выбранный район - продолжаем к расчету цены
-    elif destination_submenu == 'prospekt_oktyabrya':
-        if message_text == "⬅️ Назад":
-            context.user_data['destination_submenu'] = 'ufa'
-            logger.info(f"✅ Обработана кнопка ⬅️ Назад из submenu 'prospekt_oktyabrya', возвращаемся к ufa_destination")
-            await update.message.reply_text(
-                "📍 <b>Выберите район Уфы:</b>",
-                parse_mode='HTML',
-                reply_markup=Keyboards.select_ufa_destination()
-            )
-            return SELECT_DESTINATION
-        
-        prospekt_options = {
-            "Галле": "Проспект Октября — Галле",
-            "Горсовет": "Проспект Октября — Горсовет",
-            "ГДК": "Проспект Октября — ГДК"
-        }
-        
-        if message_text not in prospekt_options:
-            await update.message.reply_text(
-                "⚠️ Пожалуйста, выберите точку из списка ниже:",
-                reply_markup=Keyboards.select_prospekt_oktyabrya_submenu()
-            )
-            return SELECT_DESTINATION
-        
-        # Точка выбрана, заменяем текст на полное название и продолжаем
-        message_text = prospekt_options[message_text]
-        context.user_data.pop('destination_submenu', None)
-        # Продолжаем к расчету цены с message_text = полное название зоны
-    
     elif destination_submenu == 'other_destinations':
         if message_text == "🔙 Назад":
             context.user_data.pop('destination_submenu', None)
@@ -1094,7 +1031,7 @@ async def destination_zone_handler(update: Update, context: ContextTypes.DEFAULT
         other_destinations = [
             "Дмитриевка", "Михайловка", "Миловский Парк", "Миловка",
             "Николаевка", "Юматово", "Алкино", "Кафе Отдых",
-            "Сергеевка", "Чесноковка", "Иглино", "Шакша", "Акбердино", "Нагаево", "Чишмы"
+            "Чесноковка", "Затон", "Иглино", "Шакша", "Акбердино", "Нагаево", "Чишмы"
         ]
         
         if message_text not in other_destinations:
@@ -1131,6 +1068,36 @@ async def destination_zone_handler(update: Update, context: ContextTypes.DEFAULT
         context.user_data.pop('destination_submenu', None)
         message_text = "Аэропорт"  # Используем для pricing lookup
         context.user_data['dropoff_address'] = selected_terminal  # Сохраняем терминал как адрес
+    elif destination_submenu == 'prospekt_oktyabrya':
+        if message_text == "⬅️ Назад":
+            context.user_data.pop('destination_submenu', None)
+            await update.message.reply_text(
+                "🏙 <b>Выберите район Уфы для назначения:</b>",
+                parse_mode='HTML',
+                reply_markup=Keyboards.select_ufa_destination()
+            )
+            return SELECT_DESTINATION
+        
+        prospekt_points = ["Галле", "Горсовет", "ГДК"]
+        
+        if message_text not in prospekt_points:
+            await update.message.reply_text(
+                "⚠️ Пожалуйста, выберите точку из списка ниже:",
+                reply_markup=Keyboards.select_prospekt_oktyabrya_submenu()
+            )
+            return SELECT_DESTINATION
+        
+        # Точка выбрана - преобразуем в правильный ID для pricing
+        point_mapping = {
+            "Галле": "Проспект Октября — Галле",
+            "Горсовет": "Проспект Октября — Горсовет",
+            "ГДК": "Проспект Октября — ГДК"
+        }
+        
+        selected_point = point_mapping[message_text]
+        context.user_data.pop('destination_submenu', None)
+        context.user_data['dropoff_address'] = f"Проспект Октября, {message_text}"  # Сохраняем адрес
+        message_text = selected_point  # Используем для pricing lookup
     else:
         # Проверяем, если отправление из "Прочих направлений"
         is_from_other = context.user_data.get('is_from_other_destination', False)

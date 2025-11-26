@@ -7,14 +7,14 @@ from database.db import SessionLocal
 from bot.models import User, UserRole, Driver
 
 # Данные водителя
-telegram_id = 6840100810
-first_name = "Аскар"
-last_name = "Курбангулов"
+telegram_id = 1314300349
+first_name = "Дмитрий"
+last_name = "Мигунов"
 username = None  # будет взято из профиля, если есть
-car_model = "Toyota Camry"
-car_number = "А123БВ"
-car_color = None
-license_number = "+79852869872"  # Используем номер телефона как идентификатор
+car_model = "Ford Focus"
+car_number = "Н167УН702"
+car_color = "черный"
+license_number = "+79876159830"  # Используем номер телефона как идентификатор
 
 print("=" * 70)
 print("ДОБАВЛЕНИЕ ВОДИТЕЛЯ В СИСТЕМУ")
