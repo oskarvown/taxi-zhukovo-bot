@@ -270,12 +270,12 @@
     {
       "from": "STARY_ZHUKOVO",
       "to": "AVDON",
-      "price": 450
+      "price": 400
     },
     {
       "from": "NOVY_ZHUKOVO",
       "to": "AVDON",
-      "price": 400
+      "price": 350
     },
     {
       "from": "MYSOVCEVO",
@@ -285,12 +285,12 @@
     {
       "from": "AVDON",
       "to": "STARY_ZHUKOVO",
-      "price": 450
+      "price": 400
     },
     {
       "from": "AVDON",
       "to": "NOVY_ZHUKOVO",
-      "price": 400
+      "price": 350
     },
     {
       "from": "AVDON",

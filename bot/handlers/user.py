@@ -1115,7 +1115,7 @@ async def destination_zone_handler(update: Update, context: ContextTypes.DEFAULT
                 return SELECT_DESTINATION
         else:
             # Не в подменю - проверяем основные направления
-            valid_destinations = ["Ж/Д вокзал", "Дёма", "Авдон", "Уптино", "Затон", "ТРЦ МЕГА", "Вьетнамский рынок", "Яркий"]
+            valid_destinations = ["Старое Жуково", "Новое Жуково", "Мысовцево", "Ж/Д вокзал", "Дёма", "Авдон", "Уптино", "Затон", "ТРЦ МЕГА", "Вьетнамский рынок", "Яркий"]
             
             if message_text not in valid_destinations:
                 await update.message.reply_text(

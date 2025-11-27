@@ -178,10 +178,11 @@ class Keyboards:
         keyboard = [
             [KeyboardButton("Уфа"), KeyboardButton("Аэропорт")],
             [KeyboardButton("Ж/Д вокзал"), KeyboardButton("Прочие направления")],
-            [KeyboardButton("Дёма"), KeyboardButton("Авдон")],
-            [KeyboardButton("Уптино"), KeyboardButton("Затон")],
-            [KeyboardButton("ТРЦ МЕГА"), KeyboardButton("Вьетнамский рынок")],
-            [KeyboardButton("Яркий")],
+            [KeyboardButton("Старое Жуково"), KeyboardButton("Новое Жуково")],
+            [KeyboardButton("Мысовцево"), KeyboardButton("Дёма")],
+            [KeyboardButton("Авдон"), KeyboardButton("Уптино")],
+            [KeyboardButton("Затон"), KeyboardButton("ТРЦ МЕГА")],
+            [KeyboardButton("Вьетнамский рынок"), KeyboardButton("Яркий")],
             [KeyboardButton("🔙 Изменить район"), KeyboardButton("❌ Отмена")]
         ]
         return ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
