@@ -100,3 +100,6 @@ if __name__ == "__main__":
     print(f"🔍 Проверка профиля водителя для Telegram ID: {telegram_id}\n")
     check_driver_profile(telegram_id)
 
+
+
+
