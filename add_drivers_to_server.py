@@ -1,9 +1,20 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Скрипт для добавления новых водителей на сервере
 Использовать на сервере после обновления кода
+
+Запуск:
+  cd /opt/taxi-zhukovo
+  source venv/bin/activate
+  python3 add_drivers_to_server.py
 """
+import sys
+import os
+
+# Добавляем путь к проекту
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from database.db import SessionLocal
 from bot.models import User, UserRole, Driver
 
