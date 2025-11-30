@@ -45,16 +45,19 @@ class BotBlockAnalyzer:
         # 1. Проверка конфигурации
         self.check_configuration()
         
-        # 2. Проверка базы данных
+        # 2. Проверка статуса бота через Telegram API
+        self.check_telegram_status()
+        
+        # 3. Проверка базы данных
         self.check_database()
         
-        # 3. Проверка логов (если доступны)
+        # 4. Проверка логов (если доступны)
         self.check_logs()
         
-        # 4. Анализ паттернов ошибок
+        # 5. Анализ паттернов ошибок
         self.analyze_error_patterns()
         
-        # 5. Проверка активности бота
+        # 6. Проверка активности бота
         self.check_bot_activity()
         
         # Вывод результатов
@@ -86,6 +89,56 @@ class BotBlockAnalyzer:
             self.warnings.append("⚠️ Файл .env не найден")
         
         print("   ✓ Конфигурация проверена\n")
+    
+    def check_telegram_status(self):
+        """Проверка статуса бота через Telegram API"""
+        print("🔍 Проверка статуса бота в Telegram...")
+        
+        try:
+            import asyncio
+            from telegram import Bot  # pyright: ignore[reportMissingImports]
+            from telegram.error import TelegramError  # pyright: ignore[reportMissingImports]
+            
+            token = settings.telegram_bot_token
+            if not token:
+                self.warnings.append("⚠️ Токен не найден, пропуск проверки Telegram API")
+                print("   ⚠️ Токен не найден, пропуск проверки\n")
+                return
+            
+            async def check():
+                try:
+                    bot = Bot(token=token)
+                    bot_info = await bot.get_me()
+                    self.info.append(f"✅ Бот активен в Telegram: @{bot_info.username or 'без username'}")
+                    self.info.append(f"✅ Имя бота: {bot_info.first_name}")
+                    return True
+                except TelegramError as e:
+                    error_msg = str(e).lower()
+                    if "unauthorized" in error_msg or "invalid token" in error_msg:
+                        self.issues.append("❌ КРИТИЧНО: Токен неверный или отозван!")
+                        self.issues.append("   Решение: Проверьте токен в BotFather, получите новый если нужно")
+                    elif "forbidden" in error_msg:
+                        self.issues.append("❌ КРИТИЧНО: Бот заблокирован Telegram!")
+                        self.issues.append("   Решение: Проверьте статус в BotFather, обратитесь в поддержку")
+                    elif "frozen" in error_msg or "account frozen" in error_msg:
+                        self.issues.append("❌ КРИТИЧНО: Аккаунт заморожен Telegram!")
+                        self.issues.append("   Решение: Обратитесь в поддержку Telegram или создайте нового бота")
+                    else:
+                        self.warnings.append(f"⚠️ Ошибка при проверке Telegram API: {e}")
+                    return False
+            
+            result = asyncio.run(check())
+            if result:
+                print("   ✅ Бот активен в Telegram\n")
+            else:
+                print("   ❌ Проблема с ботом в Telegram\n")
+                
+        except ImportError:
+            self.warnings.append("⚠️ Не удалось импортировать telegram библиотеку для проверки API")
+            print("   ⚠️ Пропуск проверки Telegram API (библиотека не найдена)\n")
+        except Exception as e:
+            self.warnings.append(f"⚠️ Ошибка при проверке Telegram API: {e}")
+            print(f"   ⚠️ Ошибка: {e}\n")
         
     def check_database(self):
         """Проверка базы данных на проблемы"""
