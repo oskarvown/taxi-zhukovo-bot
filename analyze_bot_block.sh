@@ -2,8 +2,25 @@
 # Скрипт-обертка для запуска анализа блокировки бота
 # Автоматически активирует виртуальное окружение
 
-# Переходим в директорию скрипта
-cd "$(dirname "$0")"
+# Определяем директорию проекта
+if [ -d "/opt/taxi-zhukovo" ]; then
+    PROJECT_DIR="/opt/taxi-zhukovo"
+elif [ -f "$(dirname "$0")/analyze_bot_block.py" ]; then
+    PROJECT_DIR="$(dirname "$0")"
+else
+    # Пытаемся найти директорию проекта
+    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+    if [ -f "$SCRIPT_DIR/analyze_bot_block.py" ]; then
+        PROJECT_DIR="$SCRIPT_DIR"
+    else
+        echo "❌ Не могу найти директорию проекта!"
+        echo "Перейдите в директорию проекта: cd /opt/taxi-zhukovo"
+        exit 1
+    fi
+fi
+
+# Переходим в директорию проекта
+cd "$PROJECT_DIR" || exit 1
 
 # Проверяем наличие виртуального окружения
 if [ ! -d "venv" ]; then
