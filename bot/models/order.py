@@ -172,7 +172,7 @@ class Order(Base):
     
     @property
     def display_info(self) -> str:
-        """Информация для отображения"""
+        """Информация для отображения (с ценой, для водителей/админов)"""
         status_emoji = {
             OrderStatus.PENDING: "⏳",
             OrderStatus.NEW: "🆕",
@@ -190,18 +190,16 @@ class Order(Base):
                 IntercityOriginZone.MYSOVTSEVO: "Мысовцево",
             }
             origin = origin_map.get(self.from_zone, self.pickup_address or "—")
-            tariff_label = "По договорённости"
             created = self.created_at.strftime('%d.%m.%Y %H:%M')
             return (
                 f"{status_emoji.get(self.status, '🛣')} Межгород #{self.id}\n"
                 f"🏁 Откуда: {origin}\n"
                 f"🎯 Куда: {self.to_text or self.dropoff_address}\n"
-                f"💬 Тариф: {tariff_label}\n"
                 f"📅 Создан: {created}"
             )
         
         district_text = f"🏘 Район: {self.pickup_district}\n" if self.pickup_district else ""
-        price_text = f"{self.price:.0f} руб." if self.price else "уточняется"
+        price_text = f"{self.price:.0f} руб." if self.price else "—"
         
         return (
             f"{status_emoji.get(self.status, '📋')} Заказ #{self.id}\n"
@@ -209,6 +207,44 @@ class Order(Base):
             f"📍 Откуда: {self.pickup_address}\n"
             f"📍 Куда: {self.dropoff_address}\n"
             f"💰 Цена: {price_text}\n"
+            f"📅 Создан: {self.created_at.strftime('%d.%m.%Y %H:%M')}"
+        )
+
+    @property
+    def display_info_public(self) -> str:
+        """Информация для отображения клиенту (БЕЗ цены)"""
+        status_emoji = {
+            OrderStatus.PENDING: "⏳",
+            OrderStatus.NEW: "🆕",
+            OrderStatus.ASSIGNED: "📤",
+            OrderStatus.ACCEPTED: "✅",
+            OrderStatus.IN_PROGRESS: "🚗",
+            OrderStatus.COMPLETED: "✔️",
+            OrderStatus.CANCELLED: "❌"
+        }
+        
+        if self.is_intercity:
+            origin_map = {
+                IntercityOriginZone.DEMA: "Дёма",
+                IntercityOriginZone.OLD_ZHUKOVO: "Жуково",
+                IntercityOriginZone.MYSOVTSEVO: "Мысовцево",
+            }
+            origin = origin_map.get(self.from_zone, self.pickup_address or "—")
+            created = self.created_at.strftime('%d.%m.%Y %H:%M')
+            return (
+                f"{status_emoji.get(self.status, '🛣')} Межгород #{self.id}\n"
+                f"🏁 Откуда: {origin}\n"
+                f"🎯 Куда: {self.to_text or self.dropoff_address}\n"
+                f"📅 Создан: {created}"
+            )
+        
+        district_text = f"🏘 Район: {self.pickup_district}\n" if self.pickup_district else ""
+        
+        return (
+            f"{status_emoji.get(self.status, '📋')} Заказ #{self.id}\n"
+            f"{district_text}"
+            f"📍 Откуда: {self.pickup_address}\n"
+            f"📍 Куда: {self.dropoff_address}\n"
             f"📅 Создан: {self.created_at.strftime('%d.%m.%Y %H:%M')}"
         )
 

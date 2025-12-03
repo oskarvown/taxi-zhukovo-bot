@@ -172,13 +172,21 @@ async def notify_online_drivers(context: ContextTypes.DEFAULT_TYPE, order):
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Команда /start"""
+    import logging
+    logger = logging.getLogger(__name__)
+    
     user = update.effective_user
+    logger.info(f"🚀 /start вызван! Пользователь: {user.id if user else 'unknown'} ({user.first_name if user else 'unknown'})")
+    
     db = SessionLocal()
     
     try:
         # Создаем или получаем пользователя
         db_user = UserService.get_or_create_user(db, user)
+        logger.info(f"✓ Пользователь найден/создан: {db_user.full_name}, роль: {db_user.role.value}, телефон: {'есть' if db_user.phone_number else 'НЕТ'}")
+        
         if not await ensure_user_authenticated(update, context, db_user):
+            logger.info(f"⚠️ Пользователь {user.id} не аутентифицирован (нет телефона), показываем запрос телефона")
             return
         
         # Проверяем роль пользователя и показываем соответствующее меню
@@ -232,11 +240,16 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
             keyboard = Keyboards.main_user()
         
+        logger.info(f"✓ Отправляем приветственное сообщение для {db_user.role.value}")
         await update.message.reply_text(
             welcome_text,
             parse_mode='HTML',
             reply_markup=keyboard
         )
+        logger.info(f"✅ /start успешно обработан для пользователя {user.id}")
+    except Exception as e:
+        logger.error(f"❌ Ошибка в /start для пользователя {user.id if user else 'unknown'}: {e}", exc_info=True)
+        raise
     finally:
         db.close()
 
@@ -393,7 +406,7 @@ async def order_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             print(f"⚠️ У пользователя есть активный заказ #{active_order.id}")
             await update.message.reply_text(
                 f"⚠️ <b>У вас уже есть активный заказ</b>\n\n"
-                f"{active_order.display_info}\n\n"
+                f"{active_order.display_info_public}\n\n"
                 "Пожалуйста, завершите или отмените текущий заказ перед созданием нового.\n\n"
                 "👇 Вы можете отменить этот заказ прямо сейчас:",
                 parse_mode='HTML',
@@ -850,7 +863,7 @@ async def pickup_address_handler(update: Update, context: ContextTypes.DEFAULT_T
         destination_zone_id = PricingService.get_zone_id_by_name(destination_zone_name)
         if not destination_zone_id:
             await update.message.reply_text(
-                f"⚠️ Настройки тарифов по {district_label} не найдены. Попробуйте позже или обратитесь к администратору.",
+                f"⚠️ Направление по {district_label} временно недоступно. Попробуйте позже или обратитесь к администратору.",
                 reply_markup=Keyboards.main_menu()
             )
             return ConversationHandler.END
@@ -858,11 +871,10 @@ async def pickup_address_handler(update: Update, context: ContextTypes.DEFAULT_T
         price_result = PricingService.get_price(pickup_zone_id, destination_zone_id)
 
         if price_result.is_intercity:
-            rate = price_result.rate_per_km or settings.price_per_km
+            # Внутренняя логика тарифов сохраняется, но клиенту не показываем цены
             await update.message.reply_text(
-                "⚠️ Для этого направления пока действует межгородской тариф.\n\n"
-                f"💰 Стоимость рассчитывается по километражу: {rate:.0f} ₽/км.\n\n"
-                "Попробуйте выбрать другой район или обратитесь к диспетчеру.",
+                "⚠️ Для этого направления действует межгородской режим.\n\n"
+                "Воспользуйтесь кнопкой «🛣 Межгород» в главном меню для заказа такой поездки.",
                 parse_mode='HTML',
                 reply_markup=Keyboards.main_menu()
             )
@@ -870,7 +882,7 @@ async def pickup_address_handler(update: Update, context: ContextTypes.DEFAULT_T
 
         if price_result.is_missing or not price_result.price:
             await update.message.reply_text(
-                f"⚠️ Тариф для поездок по {district_label} пока не задан. Обратитесь к диспетчеру.",
+                f"⚠️ Направление по {district_label} временно недоступно. Обратитесь к диспетчеру.",
                 parse_mode='HTML',
                 reply_markup=Keyboards.main_menu()
             )
@@ -881,8 +893,8 @@ async def pickup_address_handler(update: Update, context: ContextTypes.DEFAULT_T
         context.user_data['calculated_price'] = float(price_result.price)
 
         await update.message.reply_text(
-            f"💰 <b>Стоимость поездки по {district_label}:</b> {price_result.price:.0f} ₽\n\n"
-            f"✍️ Укажите точный адрес назначения внутри {district_label[:-1] if district_label.endswith('е') or district_label.endswith('у') else district_label}.",
+            f"✅ <b>Направление:</b> {district_label}\n\n"
+            f"✍️ Укажите точный адрес назначения.",
             parse_mode='HTML',
             reply_markup=Keyboards.manual_input_with_cancel()
         )
@@ -1143,12 +1155,11 @@ async def destination_zone_handler(update: Update, context: ContextTypes.DEFAULT
     price_result = PricingService.get_price(pickup_zone_id, destination_zone_id)
 
     if price_result.is_intercity:
-        rate = price_result.rate_per_km or settings.price_per_km
+        # Внутренняя логика тарифов сохраняется, но клиенту не показываем цены
         await update.message.reply_text(
-            "⚠️ Для этого направления действует межгородской тариф.\n\n"
-            f"💰 Стоимость рассчитывается по километражу: {rate:.0f} ₽/км.\n\n"
-            "Пока автоматический расчет недоступен. Пожалуйста, выберите другой район назначения "
-            "или воспользуйтесь кнопкой \"🛣 Межгород\" в главном меню.",
+            "⚠️ Для этого направления действует межгородской режим.\n\n"
+            "Пожалуйста, выберите другой район назначения "
+            "или воспользуйтесь кнопкой «🛣 Межгород» в главном меню.",
             parse_mode='HTML',
             reply_markup=Keyboards.select_destination_zone()
         )
@@ -1156,7 +1167,7 @@ async def destination_zone_handler(update: Update, context: ContextTypes.DEFAULT
 
     if price_result.is_missing:
         await update.message.reply_text(
-            "⚠️ Тариф для выбранного направления пока не задан.\n\n"
+            "⚠️ Выбранное направление временно недоступно.\n\n"
             "Выберите другой район назначения или свяжитесь с диспетчером.",
             parse_mode='HTML',
             reply_markup=Keyboards.select_destination_zone()
@@ -1218,8 +1229,9 @@ async def destination_zone_handler(update: Update, context: ContextTypes.DEFAULT
             destination_zone = context.user_data.get('destination_zone_name', 'не указан')
             order_summary = (
                 "📋 <b>Подтвердите заказ</b>\n\n"
-                f"{order.display_info}\n"
-                f"🎯 Район назначения: {destination_zone}"
+                f"{order.display_info_public}\n"
+                f"🎯 Район назначения: {destination_zone}\n\n"
+                "💬 Все вопросы по стоимости и форме оплаты вы обсуждаете напрямую с водителем."
             )
             
             await update.message.reply_text(
@@ -1234,7 +1246,7 @@ async def destination_zone_handler(update: Update, context: ContextTypes.DEFAULT
     
     # Обычный случай - запрашиваем адрес назначения
     await update.message.reply_text(
-        f"💰 <b>Стоимость поездки:</b> {price_result.price:.0f} ₽\n\n"
+        "✅ <b>Направление выбрано!</b>\n\n"
         "✍️ Теперь укажите точный адрес назначения текстом.",
         parse_mode='HTML',
         reply_markup=Keyboards.manual_input_with_cancel()
@@ -1264,7 +1276,7 @@ async def dropoff_address_handler(update: Update, context: ContextTypes.DEFAULT_
 
     if not context.user_data.get('calculated_price'):
         await update.message.reply_text(
-            "⚠️ Не удалось определить стоимость. Попробуйте выбрать район назначения заново.",
+            "⚠️ Направление не определено. Попробуйте выбрать район назначения заново.",
             reply_markup=Keyboards.select_destination_zone()
         )
         return SELECT_DESTINATION
@@ -1340,8 +1352,9 @@ async def dropoff_address_handler(update: Update, context: ContextTypes.DEFAULT_
         destination_zone = context.user_data.get('destination_zone_name', 'не указан')
         order_summary = (
             "📋 <b>Подтвердите заказ</b>\n\n"
-            f"{order.display_info}\n"
-            f"🎯 Район назначения: {destination_zone}"
+            f"{order.display_info_public}\n"
+            f"🎯 Район назначения: {destination_zone}\n\n"
+            "💬 Все вопросы по стоимости и форме оплаты вы обсуждаете напрямую с водителем."
         )
         
         await update.message.reply_text(
@@ -1443,7 +1456,7 @@ async def history_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         history_text = "📋 <b>История ваших поездок</b>\n\n"
         for i, order in enumerate(orders, 1):
             history_text += f"<b>Поездка #{i}</b>\n"
-            history_text += f"{order.display_info}\n"
+            history_text += f"{order.display_info_public}\n"
             if order.rating:
                 history_text += f"⭐ Ваша оценка: {order.rating}/5\n"
             history_text += "➖➖➖➖➖➖➖➖➖\n\n"
@@ -1465,65 +1478,28 @@ async def cancel_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def pricing_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Информация о фиксированных тарифах"""
-    print(f"💵 pricing_command вызван! Пользователь: {update.effective_user.id}")
-    origin_names = [
-        "Старое Жуково",
-        "Новое Жуково",
-        "По Жуково",
-        "Дёма",
-        "Авдон",
-        "Уптино",
-        "Мысовцево",
-        "Аэропорт",
-        "Уфа-Центр",
-        "Сипайлово",
-        "Черниковка",
-        "Телецентр",
-        "Чесноковка"
-    ]
-    destination_names = [
-        "Уфа-Центр",
-        "Телецентр",
-        "Сипайлово",
-        "Черниковка",
-        "Чесноковка",
-        "По Жуково",
-        "Аэропорт"
-    ]
-
-    rows = []
-    for origin in origin_names:
-        origin_id = PricingService.get_zone_id_by_name(origin)
-        if not origin_id:
-            continue
-
-        rate_lines = []
-        for destination in destination_names:
-            destination_id = PricingService.get_zone_id_by_name(destination)
-            if not destination_id:
-                continue
-
-            price_info = PricingService.get_price(origin_id, destination_id)
-            if price_info.is_available:
-                rate_lines.append(f"• {destination}: {price_info.price:.0f} ₽")
-
-        if rate_lines:
-            rows.append(f"<b>{origin} →</b>\n" + "\n".join(rate_lines))
-
-    if not rows:
-        rows.append("Тарифы будут опубликованы позже. Пожалуйста, уточните стоимость у оператора.")
-
-    pricing_text = (
-        "💵 <b>Фиксированные тарифы Такси Жуково+</b>\n\n"
-        + "\n\n".join(rows)
-        + "\n\n"
+    """Информация о сервисе такси"""
+    print(f"ℹ️ pricing_command (info) вызван! Пользователь: {update.effective_user.id}")
+    
+    info_text = (
+        "🚖 <b>Такси Жуково+</b>\n\n"
+        "📍 <b>Зона обслуживания:</b>\n"
+        "• Жуково (Новое, Старое)\n"
+        "• Дёма\n"
+        "• Авдон\n"
+        "• Уптино\n"
+        "• Мысовцево\n"
+        "• Сергеевка\n"
+        "• Уфа (Центр, Сипайлово, Черниковка, Телецентр)\n"
+        "• Аэропорт\n"
+        "• Чесноковка\n\n"
         "🛣 <b>Межгород:</b>\n"
-        "• Стоимость обсуждается напрямую с водителем через раздел «🛣 Межгород».\n\n"
-        "💡 Точная стоимость показывается автоматически при создании заказа."
+        "Любые направления по РФ через раздел «🛣 Межгород».\n\n"
+        "💬 <b>Важно:</b>\n"
+        "Все вопросы по стоимости и форме оплаты вы обсуждаете напрямую с водителем."
     )
 
-    await update.message.reply_text(pricing_text, parse_mode='HTML')
+    await update.message.reply_text(info_text, parse_mode='HTML')
 
 
 async def contact_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1623,7 +1599,7 @@ async def active_order_command(update: Update, context: ContextTypes.DEFAULT_TYP
         
         message = (
             f"<b>📋 Ваш активный заказ</b>\n\n"
-            f"{active_order.display_info}\n\n"
+            f"{active_order.display_info_public}\n\n"
             f"<b>Статус:</b> {status_text.get(active_order.status, active_order.status)}\n\n"
         )
         
@@ -1812,9 +1788,6 @@ async def user_order_history_handler(update: Update, context: ContextTypes.DEFAU
             if driver_info != "—":
                 message += f"🚗 {driver_info}\n"
             
-            if order.price and order.price > 0:
-                message += f"💰 {order.price:.0f} ₽\n"
-            
             message += f"📊 Статус: {status_emoji} {order.status.value if hasattr(order.status, 'value') else order.status}"
             
             if rating_str:
@@ -1862,7 +1835,7 @@ def register_user_handlers(application: Application):
     excluded_commands = [
         '🟢 Я на линии', '🔴 Я оффлайн', '📋 Мои заказы', '📊 Статистика',
         '📍 Новое Жуково', '📍 Старое Жуково', '📍 Мысовцево', '📍 Авдон', '📍 Уптино', '📍 Дёма', '🔙 Назад',
-        '📍 Мой заказ', 'ℹ️ Помощь', '💵 Тарифы', '📞 Связаться',
+        '📍 Мой заказ', 'ℹ️ Помощь', 'ℹ️ О сервисе', '📞 Связаться',
         '📜 Правила пользования', '🛣 Межгород', '🔙 В главное меню'
     ]
     driver_commands_filter = ~filters.Regex(f'^({"|".join(excluded_commands)})$')
@@ -1891,7 +1864,7 @@ def register_user_handlers(application: Application):
         fallbacks=[
             CommandHandler('cancel', cancel_command),
             # Завершаем разговор при нажатии на кнопки меню
-            MessageHandler(filters.Regex('^(📍 Мой заказ|📋 Мои заказы|ℹ️ Помощь|💵 Тарифы|📞 Связаться|📜 Правила пользования|🛣 Межгород|🔙 В главное меню)$'), 
+            MessageHandler(filters.Regex('^(📍 Мой заказ|📋 Мои заказы|ℹ️ Помощь|ℹ️ О сервисе|📞 Связаться|📜 Правила пользования|🛣 Межгород|🔙 В главное меню)$'), 
                           lambda u, c: ConversationHandler.END)
         ],
         per_message=False,  # Важно: не перехватывать каждое сообщение
@@ -1915,7 +1888,7 @@ def register_user_handlers(application: Application):
     application.add_handler(MessageHandler(filters.Regex('^📋 Мои заказы$'), history_command), group=-1)
     application.add_handler(MessageHandler(filters.Regex('^🧾 Мои поездки$'), user_order_history_handler), group=-1)
     application.add_handler(MessageHandler(filters.Regex('^ℹ️ Помощь$'), help_command), group=-1)
-    application.add_handler(MessageHandler(filters.Regex('^💵 Тарифы$'), pricing_command), group=-1)
+    application.add_handler(MessageHandler(filters.Regex('^ℹ️ О сервисе$'), pricing_command), group=-1)
     application.add_handler(MessageHandler(filters.Regex('^📞 Связаться$'), contact_command), group=-1)
     application.add_handler(MessageHandler(filters.Regex('^📜 Правила пользования$'), rules_command), group=-1)
     application.add_handler(MessageHandler(filters.Regex('^🛣 Межгород|🧭 Межгород$'), intercity_command), group=-1)
@@ -1940,5 +1913,5 @@ def register_user_handlers(application: Application):
     print("✅ Обработчики пользователей зарегистрированы!")
     print(f"   - ConversationHandler для заказа (кнопка '🚖 Заказать такси')")
     print(f"   - Команды: /start, /help, /history, /active")
-    print(f"   - Кнопки меню: Мой заказ, Мои заказы, Помощь, Тарифы, Связаться, Межгород")
+    print(f"   - Кнопки меню: Мой заказ, Мои заказы, Помощь, О сервисе, Связаться, Межгород")
 

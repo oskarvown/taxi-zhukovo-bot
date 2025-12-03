@@ -14,7 +14,7 @@ class Keyboards:
         keyboard = [
             [KeyboardButton("🚖 Заказать такси")],
             [KeyboardButton("📍 Мой заказ"), KeyboardButton("🛣 Межгород")],
-            [KeyboardButton("📋 Мои заказы"), KeyboardButton("💵 Тарифы")],
+            [KeyboardButton("📋 Мои заказы"), KeyboardButton("ℹ️ О сервисе")],
             [KeyboardButton("📜 Правила пользования"), KeyboardButton("ℹ️ Помощь")],
             [KeyboardButton("📞 Связаться")],
         ]
