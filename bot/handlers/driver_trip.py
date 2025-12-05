@@ -365,7 +365,7 @@ async def driver_finish_callback(update: Update, context: ContextTypes.DEFAULT_T
         if order.status == OrderStatus.FINISHED:
             await query.edit_message_text(
                 "✅ <b>Поездка уже завершена!</b>\n\n"
-                "Спасибо за работу! Вы вернулись в очередь.",
+                "Спасибо за работу! Чтобы снова выйти на линию, нажмите '🟢 Я на линии'.",
                 parse_mode='HTML'
             )
             return
@@ -373,20 +373,21 @@ async def driver_finish_callback(update: Update, context: ContextTypes.DEFAULT_T
         # Обновляем статус заказа
         OrderService.set_finished(db, order)
         
-        # Возвращаем водителя в онлайн и в очередь
-        driver.status = DriverStatus.ONLINE
-        driver.online_since = datetime.utcnow()
-        db.commit()
+        # ВАЖНО: Водитель выходит из очереди после завершения поездки
+        # Он должен вручную нажать "Я на линии", чтобы вернуться в очередь
+        queue_manager.remove_driver(driver.id)
         
-        # Добавляем в очередь
-        zone = driver.current_zone.value if hasattr(driver.current_zone, 'value') else driver.current_zone
-        if zone and zone != "NONE":
-            queue_manager.add_driver(driver.id, zone, db)
+        # Переводим водителя в OFFLINE статус (как будто он не на линии)
+        driver.status = DriverStatus.OFFLINE
+        driver.online_since = None
+        # current_zone оставляем как есть (история, но водитель не в очереди)
+        db.commit()
         
         # Обновляем сообщение водителю
         await query.edit_message_text(
             "✅ <b>Поездка завершена!</b>\n\n"
-            "Спасибо за работу! Вы вернулись в очередь.",
+            "Спасибо за работу!\n\n"
+            "Чтобы снова выйти на линию и принимать заказы, нажмите '🟢 Я на линии'.",
             parse_mode='HTML'
         )
         
@@ -427,7 +428,7 @@ async def driver_finish_callback(update: Update, context: ContextTypes.DEFAULT_T
         except Exception as e:
             logger.error(f"❌ Ошибка отправки запроса на оценку клиенту {order.customer.telegram_id}: {e}", exc_info=True)
         
-        logger.info(f"Водитель {driver.id} завершил поездку {order_id}, возвращен в очередь {zone}")
+        logger.info(f"Водитель {driver.id} завершил поездку {order_id}, вышел из очереди (должен вручную вернуться на линию)")
         
     except Exception as e:
         logger.error(f"Ошибка при завершении поездки: {e}", exc_info=True)
@@ -560,11 +561,17 @@ async def _process_cancel_order(context: ContextTypes.DEFAULT_TYPE, order, drive
             db.commit()
         
         # Возвращаем водителя в онлайн
+        # ВАЖНО: Не обновляем online_since - сохраняем оригинальное время для FIFO порядка
         driver.status = DriverStatus.ONLINE
-        driver.online_since = datetime.utcnow()
+        # online_since не меняем - водитель возвращается в очередь с тем же приоритетом
+        
+        # Если online_since был None (не должен быть, но на всякий случай)
+        if driver.online_since is None:
+            driver.online_since = datetime.utcnow()
+        
         db.commit()
         
-        # Возвращаем в очередь
+        # Возвращаем в очередь (с сохранением FIFO порядка)
         zone = driver.current_zone.value if hasattr(driver.current_zone, 'value') else driver.current_zone
         if zone and zone != "NONE":
             queue_manager.add_driver(driver.id, zone, db)

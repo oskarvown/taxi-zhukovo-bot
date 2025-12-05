@@ -275,7 +275,10 @@ class OrderService:
                 # Если водитель был в статусе PENDING_ACCEPTANCE, возвращаем его в ONLINE
                 if driver_with_pending.status == DriverStatus.PENDING_ACCEPTANCE:
                     driver_with_pending.status = DriverStatus.ONLINE
-                    driver_with_pending.online_since = datetime.utcnow()
+                    # ВАЖНО: Не обновляем online_since - сохраняем FIFO порядок
+                    # Водитель возвращается в очередь с тем же приоритетом
+                    if driver_with_pending.online_since is None:
+                        driver_with_pending.online_since = datetime.utcnow()
                     
                     # Возвращаем водителя в очередь
                     zone = driver_with_pending.current_zone.value if hasattr(driver_with_pending.current_zone, 'value') else driver_with_pending.current_zone

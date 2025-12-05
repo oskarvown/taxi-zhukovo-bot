@@ -211,19 +211,24 @@ async def driver_select_zone_handler(update: Update, context: ContextTypes.DEFAU
         old_status = driver.status
         old_zone = driver.current_zone.value if hasattr(driver.current_zone, 'value') else driver.current_zone
         
+        # ВАЖНО: Удаляем водителя из всех зон ПЕРЕД обновлением БД
+        # Это предотвращает race condition и гарантирует отсутствие дублирования
+        queue_manager._remove_driver_from_all_zones(driver.id)
+        
+        # Обновляем статус водителя
+        # online_since обновляется только при выборе зоны (выход на линию)
         driver.status = DriverStatus.ONLINE
         driver.current_zone = zone_key
-        driver.online_since = datetime.utcnow()
+        driver.online_since = datetime.utcnow()  # Время когда водитель выбрал эту зону
         db.commit()
         
-        # Обновляем очередь
-        if old_status == DriverStatus.ONLINE and old_zone in ZONES:
-            # Смена зоны
-            queue_manager.switch_zone(driver.id, zone_key, db)
+        # Добавляем в новую очередь (add_driver также защищен от дублирования)
+        queue_manager.add_driver(driver.id, zone_key, db)
+        
+        # Определяем действие для сообщения
+        if old_status == DriverStatus.ONLINE and old_zone in ZONES and old_zone != zone_key:
             action = "переведены"
         else:
-            # Первый вход онлайн
-            queue_manager.add_driver(driver.id, zone_key, db)
             action = "вышли"
         
         # Получаем позицию в очереди

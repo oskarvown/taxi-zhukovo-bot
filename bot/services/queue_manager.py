@@ -88,13 +88,25 @@ class QueueManager:
             logger.info(f"Водитель {driver.id} ({driver.user.full_name if driver.user else 'unknown'}) добавлен в очередь {zone}")
     
     def add_driver(self, driver_id: int, zone: str, db: Session):
-        """Добавить водителя в очередь зоны"""
+        """
+        Добавить водителя в очередь зоны
+        
+        Защита от дублирования:
+        - Удаляет водителя из всех зон перед добавлением
+        - Проверяет, что водитель не уже в этой очереди
+        """
         if zone not in ZONES:
             logger.warning(f"Попытка добавить водителя {driver_id} в неизвестную зону {zone}")
             return
         
-        # Удаляем из старой зоны если есть
-        self.remove_driver(driver_id)
+        # КРИТИЧЕСКИ ВАЖНО: Удаляем из ВСЕХ зон перед добавлением
+        # Это предотвращает дублирование и race condition
+        self._remove_driver_from_all_zones(driver_id)
+        
+        # Дополнительная проверка: если водитель уже в этой очереди, не добавляем
+        if driver_id in self._queues[zone]:
+            logger.warning(f"Водитель {driver_id} уже в очереди {zone}, пропускаем добавление")
+            return
         
         # Добавляем в хвост новой очереди
         self._queues[zone].append(driver_id)
@@ -199,7 +211,12 @@ class QueueManager:
         return driver_ids
     
     def switch_zone(self, driver_id: int, new_zone: str, db: Session):
-        """Переместить водителя в другую зону"""
+        """
+        Переместить водителя в другую зону
+        
+        Гарантирует, что водитель будет удален из всех зон перед добавлением в новую.
+        Это предотвращает нахождение водителя в нескольких зонах одновременно.
+        """
         if new_zone not in ZONES:
             logger.warning(f"Попытка переместить водителя {driver_id} в неизвестную зону {new_zone}")
             return
@@ -209,13 +226,29 @@ class QueueManager:
             logger.debug(f"Водитель {driver_id} уже в зоне {new_zone}")
             return
         
-        # Удаляем из старой зоны
-        self.remove_driver(driver_id)
+        # КРИТИЧЕСКИ ВАЖНО: Удаляем водителя из ВСЕХ возможных зон
+        # Это гарантирует отсутствие дублирования при быстром переключении между зонами
+        self._remove_driver_from_all_zones(driver_id)
         
         # Добавляем в новую зону
         self.add_driver(driver_id, new_zone, db)
         
         logger.info(f"Водитель {driver_id} переведён из зоны {old_zone} в {new_zone}")
+    
+    def _remove_driver_from_all_zones(self, driver_id: int):
+        """
+        Удалить водителя из всех зон (внутренний метод для безопасности)
+        Используется для предотвращения дублирования водителя в нескольких зонах
+        """
+        # Удаляем из всех очередей (на случай бага)
+        for zone in ZONES:
+            if driver_id in self._queues[zone]:
+                self._queues[zone].remove(driver_id)
+                logger.debug(f"Водитель {driver_id} удалён из зоны {zone} (очистка)")
+        
+        # Удаляем из кеша
+        if driver_id in self._driver_zones:
+            del self._driver_zones[driver_id]
     
     def get_queue_position(self, driver_id: int) -> Optional[int]:
         """Получить позицию водителя в очереди (1-based)"""

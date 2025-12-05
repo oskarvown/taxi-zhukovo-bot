@@ -1,12 +1,16 @@
 """
 Обработчики команд для администраторов
 """
+import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from database.db import SessionLocal
 from bot.services import UserService
-from bot.models import User, Driver, Order, OrderStatus, UserRole
+from bot.services.queue_manager import queue_manager
+from bot.models import User, Driver, Order, OrderStatus, UserRole, DriverStatus, DriverZone
 from sqlalchemy import func
+
+logger = logging.getLogger(__name__)
 
 
 async def admin_stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -164,6 +168,159 @@ async def admin_pending_orders(update: Update, context: ContextTypes.DEFAULT_TYP
         db.close()
 
 
+async def admin_check_dema_drivers(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Проверить водителей в зоне DEMA
+    
+    Выводит всех водителей, у которых current_zone = "DEMA"
+    """
+    user = update.effective_user
+    
+    if not UserService.is_admin(user.id):
+        await update.message.reply_text("У вас нет прав администратора")
+        return
+    
+    db = SessionLocal()
+    try:
+        # Находим всех водителей в зоне DEMA
+        dema_drivers = db.query(Driver).filter(
+            Driver.current_zone == DriverZone.DEMA
+        ).all()
+        
+        if not dema_drivers:
+            await update.message.reply_text("✅ В зоне DEMA нет водителей")
+            return
+        
+        from bot.constants import PUBLIC_ZONE_LABELS
+        
+        message = f"📍 <b>Водители в зоне DEMA (всего: {len(dema_drivers)})</b>\n\n"
+        
+        online_count = 0
+        for driver in dema_drivers:
+            status_value = driver.status.value if hasattr(driver.status, 'value') else str(driver.status)
+            zone_value = driver.current_zone.value if hasattr(driver.current_zone, 'value') else str(driver.current_zone)
+            
+            status_emoji = "🟢" if status_value == "online" else "🔴" if status_value == "offline" else "⏳"
+            if status_value == "online":
+                online_count += 1
+            
+            driver_name = driver.user.full_name if driver.user else "Неизвестно"
+            message += (
+                f"{status_emoji} <b>ID {driver.id}</b>: {driver_name}\n"
+                f"   Статус: {status_value}\n"
+                f"   Зона: {zone_value}\n"
+                f"   Online since: {driver.online_since or 'не указано'}\n"
+                f"   Авто: {driver.car_model} ({driver.car_number})\n\n"
+            )
+        
+        message += f"🟢 Онлайн водителей: {online_count} из {len(dema_drivers)}"
+        
+        # Разбиваем на части, если сообщение слишком длинное
+        if len(message) > 4000:
+            # Отправляем по частям
+            parts = message.split("\n\n")
+            current_part = ""
+            for part in parts:
+                if len(current_part + part) > 3500:
+                    await update.message.reply_text(current_part, parse_mode='HTML')
+                    current_part = part + "\n\n"
+                else:
+                    current_part += part + "\n\n"
+            if current_part:
+                await update.message.reply_text(current_part, parse_mode='HTML')
+        else:
+            await update.message.reply_text(message, parse_mode='HTML')
+        
+        logger.info(f"Администратор {user.id} проверил водителей в зоне DEMA ({len(dema_drivers)} водителей)")
+        
+    except Exception as e:
+        logger.error(f"Ошибка при проверке водителей в зоне DEMA: {e}", exc_info=True)
+        await update.message.reply_text(f"❌ Произошла ошибка:\n{str(e)}")
+    finally:
+        db.close()
+
+
+async def admin_reset_drivers(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Полный сброс состояния всех водителей
+    
+    Выполняет:
+    - Очистку поля online_since
+    - Очистку/сброс current_zone на NONE
+    - Очистку статуса "на линии" (OFFLINE)
+    - Удаление водителей из всех очередей
+    
+    То есть у всех водителей будет состояние «как будто они ещё не нажимали Я на линии».
+    """
+    user = update.effective_user
+    
+    if not UserService.is_admin(user.id):
+        await update.message.reply_text("У вас нет прав администратора")
+        return
+    
+    db = SessionLocal()
+    try:
+        # Получаем всех водителей
+        drivers = db.query(Driver).all()
+        
+        if not drivers:
+            await update.message.reply_text("❌ Нет водителей в системе")
+            return
+        
+        reset_count = 0
+        
+        # Сначала удаляем всех водителей из очередей
+        for driver in drivers:
+            # Используем метод полного удаления из всех зон
+            queue_manager._remove_driver_from_all_zones(driver.id)
+            
+            # Сохраняем старую зону для логирования
+            old_zone = driver.current_zone.value if hasattr(driver.current_zone, 'value') else driver.current_zone
+            old_status = driver.status.value if hasattr(driver.status, 'value') else driver.status
+            
+            # Сбрасываем состояние водителя
+            driver.status = DriverStatus.OFFLINE
+            driver.current_zone = DriverZone.NONE
+            driver.online_since = None
+            driver.pending_order_id = None
+            driver.pending_until = None
+            
+            reset_count += 1
+            logger.info(
+                f"Сброшен статус водителя {driver.id} (было: status={old_status}, zone={old_zone})"
+            )
+        
+        # Сохраняем изменения в БД
+        db.commit()
+        
+        # Очищаем все очереди в менеджере (используем ZONES вместо keys())
+        from bot.constants import ZONES
+        queue_manager._queues = {zone: [] for zone in ZONES}
+        queue_manager._driver_zones = {}
+        
+        logger.info(f"Все очереди очищены. Осталось водителей в очередях: {sum(len(q) for q in queue_manager._queues.values())}")
+        
+        await update.message.reply_text(
+            f"✅ <b>Сброс состояния водителей выполнен</b>\n\n"
+            f"Обработано водителей: {reset_count}\n\n"
+            f"Все водители переведены в статус OFFLINE.\n"
+            f"Все очереди очищены.\n\n"
+            f"Водители должны заново нажать '🟢 Я на линии', чтобы выйти в очередь.",
+            parse_mode='HTML'
+        )
+        
+        logger.info(f"Администратор {user.id} выполнил полный сброс состояния всех водителей ({reset_count} водителей)")
+        
+    except Exception as e:
+        logger.error(f"Ошибка при сбросе состояния водителей: {e}", exc_info=True)
+        db.rollback()
+        await update.message.reply_text(
+            f"❌ Произошла ошибка при сбросе состояния водителей:\n{str(e)}"
+        )
+    finally:
+        db.close()
+
+
 def register_admin_handlers(application: Application):
     """Регистрация обработчиков для администраторов"""
     
@@ -171,4 +328,6 @@ def register_admin_handlers(application: Application):
     application.add_handler(CommandHandler('verify_driver', admin_verify_driver))
     application.add_handler(CommandHandler('list_drivers', admin_list_drivers))
     application.add_handler(CommandHandler('pending_orders', admin_pending_orders))
+    application.add_handler(CommandHandler('reset_drivers', admin_reset_drivers))
+    application.add_handler(CommandHandler('check_dema', admin_check_dema_drivers))
 
