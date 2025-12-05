@@ -321,6 +321,183 @@ async def admin_reset_drivers(update: Update, context: ContextTypes.DEFAULT_TYPE
         db.close()
 
 
+async def admin_queue_status(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Показать статус всех очередей по зонам
+    
+    Показывает для каждой зоны:
+    - Количество водителей в очереди
+    - Список водителей с позициями, статусами и именами
+    """
+    user = update.effective_user
+    
+    if not UserService.is_admin(user.id):
+        await update.message.reply_text("У вас нет прав администратора")
+        return
+    
+    db = SessionLocal()
+    try:
+        from bot.constants import ZONES, PUBLIC_ZONE_LABELS
+        
+        # Перестраиваем очереди из БД для актуальности
+        queue_manager.rebuild_from_db(db)
+        
+        # Получаем информацию о всех очередях
+        queues_info = queue_manager.get_all_queues_info()
+        
+        # Формируем сообщение
+        message_parts = []
+        message_parts.append("📊 <b>СТАТУС ОЧЕРЕДЕЙ ПО ЗОНАМ</b>\n")
+        message_parts.append("=" * 50 + "\n")
+        
+        total_online = 0
+        zones_with_drivers = 0
+        
+        # Показываем все зоны, включая пустые
+        for zone in ZONES:
+            zone_label = PUBLIC_ZONE_LABELS.get(zone, zone)
+            queue_info = queues_info[zone]
+            driver_ids = queue_info['drivers']
+            
+            if driver_ids:
+                zones_with_drivers += 1
+            else:
+                # Показываем пустую зону кратко
+                message_parts.append(f"\n📍 <b>{zone_label}</b>: ✅ пусто")
+                continue
+            
+            message_parts.append(f"\n📍 <b>{zone_label}</b>")
+            message_parts.append(f"👥 В очереди: {len(driver_ids)} водителей\n")
+            
+            # Получаем информацию о каждом водителе
+            for position, driver_id in enumerate(driver_ids, 1):
+                driver = db.query(Driver).filter(Driver.id == driver_id).first()
+                
+                if not driver:
+                    message_parts.append(f"  {position}. ⚠️ Водитель {driver_id} (не найден в БД)\n")
+                    continue
+                
+                # Статус водителя
+                status_value = driver.status.value if hasattr(driver.status, 'value') else str(driver.status)
+                status_emoji = {
+                    DriverStatus.ONLINE: "🟢",
+                    DriverStatus.OFFLINE: "🔴",
+                    DriverStatus.PENDING_ACCEPTANCE: "⏳",
+                    DriverStatus.BUSY: "🚗",
+                }.get(driver.status, "❓")
+                
+                driver_name = driver.user.full_name if driver.user else "Неизвестно"
+                
+                # Время на линии
+                online_since_str = ""
+                if driver.online_since:
+                    from datetime import datetime, timedelta
+                    now = datetime.utcnow()
+                    diff = now - driver.online_since
+                    hours = int(diff.total_seconds() // 3600)
+                    minutes = int((diff.total_seconds() % 3600) // 60)
+                    if hours > 0:
+                        online_since_str = f" ({hours}ч {minutes}м)"
+                    else:
+                        online_since_str = f" ({minutes}м)"
+                
+                # Pending заказ
+                pending_info = ""
+                if driver.pending_order_id:
+                    pending_info = " ⏳ (ожидает ответ)"
+                
+                message_parts.append(
+                    f"  {position}. {status_emoji} <b>{driver_name}</b>\n"
+                    f"     ID: {driver.id} | Авто: {driver.car_model} {driver.car_number}{pending_info}{online_since_str}\n"
+                )
+                
+                if status_value == "online":
+                    total_online += 1
+            
+            message_parts.append("")  # Пустая строка между зонами
+        
+        # Итоговая статистика
+        message_parts.append("\n" + "=" * 50)
+        message_parts.append(f"\n📈 <b>ИТОГО:</b>")
+        message_parts.append(f"🟢 Онлайн водителей в очередях: {total_online}")
+        message_parts.append(f"📍 Зон с водителями: {zones_with_drivers} из {len(ZONES)}")
+        if zones_with_drivers == 0:
+            message_parts.append("\n⚠️ Во всех зонах нет водителей в очереди")
+        
+        full_message = "\n".join(message_parts)
+        
+        # Разбиваем на части, если сообщение слишком длинное
+        if len(full_message) > 4000:
+            # Разбиваем по зонам
+            parts = []
+            current_part = "📊 <b>СТАТУС ОЧЕРЕДЕЙ ПО ЗОНАМ</b>\n" + "=" * 50 + "\n"
+            
+            for zone in ZONES:
+                zone_label = PUBLIC_ZONE_LABELS.get(zone, zone)
+                queue_info = queues_info[zone]
+                driver_ids = queue_info['drivers']
+                
+                if not driver_ids:
+                    continue
+                
+                zone_text = f"\n📍 <b>{zone_label}</b>\n👥 В очереди: {len(driver_ids)} водителей\n\n"
+                
+                for position, driver_id in enumerate(driver_ids, 1):
+                    driver = db.query(Driver).filter(Driver.id == driver_id).first()
+                    if not driver:
+                        continue
+                    
+                    status_emoji = {
+                        DriverStatus.ONLINE: "🟢",
+                        DriverStatus.OFFLINE: "🔴",
+                        DriverStatus.PENDING_ACCEPTANCE: "⏳",
+                        DriverStatus.BUSY: "🚗",
+                    }.get(driver.status, "❓")
+                    
+                    driver_name = driver.user.full_name if driver.user else "Неизвестно"
+                    zone_text += f"{position}. {status_emoji} {driver_name} (ID: {driver.id})\n"
+                
+                # Если текущая часть + зона слишком длинная, отправляем текущую и начинаем новую
+                if len(current_part + zone_text) > 3500:
+                    parts.append(current_part)
+                    current_part = zone_text
+                else:
+                    current_part += zone_text
+                    current_part += "\n"
+            
+            # Добавляем последнюю часть и итоги
+            if current_part:
+                parts.append(current_part)
+            
+            # Отправляем по частям
+            for i, part in enumerate(parts, 1):
+                if i < len(parts):
+                    await update.message.reply_text(
+                        part,
+                        parse_mode='HTML'
+                    )
+                else:
+                    # В последней части добавляем итоги
+                    part += "\n" + "=" * 50
+                    part += f"\n📈 <b>ИТОГО:</b> 🟢 Онлайн: {total_online} | Зон: {zones_with_drivers}/{len(ZONES)}"
+                    await update.message.reply_text(
+                        part,
+                        parse_mode='HTML'
+                    )
+        else:
+            await update.message.reply_text(full_message, parse_mode='HTML')
+        
+        logger.info(f"Администратор {user.id} запросил статус очередей (онлайн: {total_online}, зон: {zones_with_drivers})")
+        
+    except Exception as e:
+        logger.error(f"Ошибка при получении статуса очередей: {e}", exc_info=True)
+        await update.message.reply_text(
+            f"❌ Произошла ошибка при получении статуса очередей:\n{str(e)}"
+        )
+    finally:
+        db.close()
+
+
 def register_admin_handlers(application: Application):
     """Регистрация обработчиков для администраторов"""
     
@@ -330,4 +507,5 @@ def register_admin_handlers(application: Application):
     application.add_handler(CommandHandler('pending_orders', admin_pending_orders))
     application.add_handler(CommandHandler('reset_drivers', admin_reset_drivers))
     application.add_handler(CommandHandler('check_dema', admin_check_dema_drivers))
+    application.add_handler(CommandHandler('queue_status', admin_queue_status))
 
