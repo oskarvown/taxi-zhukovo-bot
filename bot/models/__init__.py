@@ -2,7 +2,7 @@
 Модели данных для бота такси
 """
 from .user import User, UserRole
-from .driver import Driver, DriverStatus
+from .driver import Driver, DriverStatus, DriverZone
 from .order import (
     Order,
     OrderStatus,
@@ -17,6 +17,7 @@ __all__ = [
     "UserRole",
     "Driver",
     "DriverStatus",
+    "DriverZone",
     "Order",
     "OrderStatus",
     "District",
