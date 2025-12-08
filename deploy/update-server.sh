@@ -25,3 +25,11 @@ systemctl status taxi-bot
 
 echo "✅ Обновление завершено!"
 
+
+
+
+
+
+
+
+

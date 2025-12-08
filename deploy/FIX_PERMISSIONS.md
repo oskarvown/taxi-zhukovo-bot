@@ -32,3 +32,11 @@ cd /opt/taxi-zhukovo && chmod +x deploy/deploy.sh && ./deploy/deploy.sh
 
 
 
+
+
+
+
+
+
+
+

@@ -161,3 +161,6 @@ echo "3. Запустите проверку зоны DEMA: python check_dema_dr
 echo ""
 echo "Бэкап БД: $BACKUP_FILE"
 
+
+
+

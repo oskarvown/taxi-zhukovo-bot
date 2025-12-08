@@ -50,3 +50,11 @@ echo "   или"
 echo "   tail -f /opt/taxi-zhukovo/logs/bot.log"
 
 
+
+
+
+
+
+
+
+

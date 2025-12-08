@@ -30,6 +30,7 @@ async def ensure_user_authenticated(
     if not db_user or db_user.phone_number:
         return True
 
+    logger.info(f"📱 Запрашиваем телефон у пользователя {update.effective_user.id if update.effective_user else 'unknown'}")
     await _prompt_phone(update, context)
     return False
 

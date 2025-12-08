@@ -94,3 +94,11 @@ echo "ssh root@195.133.73.49 'journalctl -u taxi-bot -f'"
 
 
 
+
+
+
+
+
+
+
+
