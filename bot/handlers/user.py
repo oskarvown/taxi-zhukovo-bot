@@ -553,6 +553,8 @@ async def district_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data['pickup_district'] = selected_destination
         context.user_data['pickup_zone_id'] = zone_id
         context.user_data['is_from_other_destination'] = True  # Флаг для ограничения выбора назначения
+        # Сбрасываем подменю назначения, чтобы не залипало (например, аэропорт)
+        context.user_data.pop('destination_submenu', None)
         
         # Запрашиваем адрес
         await update.message.reply_text(
@@ -801,6 +803,8 @@ async def district_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         context.user_data['pickup_zone_id'] = zone_id
         context.user_data['pickup_mode'] = None
         context.user_data['is_from_other_destination'] = False  # Явно сбрасываем флаг для обычных районов
+        # Сбрасываем подменю назначения, чтобы не залипало с предыдущих заказов
+        context.user_data.pop('destination_submenu', None)
         
         await update.message.reply_text(
             f"✅ <b>Район: {context.user_data['pickup_district']}</b>\n\n"
@@ -835,6 +839,8 @@ async def pickup_address_handler(update: Update, context: ContextTypes.DEFAULT_T
     context.user_data['pickup_address'] = text
     context.user_data['pickup_lat'] = None
     context.user_data['pickup_lon'] = None
+    # На всякий случай сбрасываем подменю назначения (airport/ufa/other) перед выбором направления
+    context.user_data.pop('destination_submenu', None)
 
     pickup_mode = context.user_data.get('pickup_mode')
     if pickup_mode in ['po_zhukovo', 'po_dema', 'po_avdon', 'po_sergeevka']:
