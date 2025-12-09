@@ -554,20 +554,37 @@ async def driver_cancel_reason_handler(update: Update, context: ContextTypes.DEF
 async def _process_cancel_order(context: ContextTypes.DEFAULT_TYPE, order, driver: Driver, cancel_reason: str, db):
     """Обработать отмену заказа (общая логика)"""
     try:
-        # Отменяем заказ
-        OrderService.cancel_order(db, order, canceled_by="driver")
+        # Отменяем заказ со стороны водителя: переводим заказ обратно в поиск
+        # 1) Возвращаем водителя в online (штрафуем в конец очереди)
+        driver.status = DriverStatus.ONLINE
+        driver.online_since = datetime.utcnow()
+        driver.pending_order_id = None
+        driver.pending_until = None
+
+        # 2) Снимаем назначение с заказа, переводим в NEW и запускаем перераспределение
+        from bot.services.order_dispatcher import get_dispatcher
+        from bot.services.scheduler import scheduler
+
+        # Отменяем таймер водителя, если был
+        try:
+            await scheduler.cancel_driver_timeout(driver.id)
+        except Exception:
+            pass
+
+        order.assigned_driver_id = None
+        order.selected_driver_id = None
+        order.driver_id = None
+        order.status = OrderStatus.NEW
+        db.commit()
+
+        # Запускаем перераспределение (по очереди)
+        dispatcher = get_dispatcher()
+        await dispatcher.create_and_dispatch_order(order.id, db)
         
         # Если есть причина, сохраняем её в комментарий
         if cancel_reason:
             order.customer_comment = f"Отмена водителем: {cancel_reason}"
             db.commit()
-        
-        # Возвращаем водителя в онлайн
-        # Штрафуем: ставим в конец очереди
-        driver.status = DriverStatus.ONLINE
-        driver.online_since = datetime.utcnow()
-        
-        db.commit()
         
         # Возвращаем в очередь (с сохранением FIFO порядка)
         zone = driver.current_zone.value if hasattr(driver.current_zone, 'value') else driver.current_zone

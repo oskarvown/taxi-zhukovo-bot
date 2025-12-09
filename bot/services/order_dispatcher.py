@@ -35,9 +35,10 @@ class OrderDispatcher:
             logger.error(f"Заказ {order_id} не найден")
             return
         
-        # Устанавливаем статус NEW
-        order.status = OrderStatus.NEW
-        db.commit()
+        # Устанавливаем статус NEW (если не установлен)
+        if order.status != OrderStatus.NEW:
+            order.status = OrderStatus.NEW
+            db.commit()
         
         logger.info(f"Начато распределение заказа {order_id} в зоне {order.zone}")
         
