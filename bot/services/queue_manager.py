@@ -3,7 +3,7 @@
 Управляет ZoneQueue для каждой зоны
 """
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Optional, Dict
 from collections import defaultdict
 
@@ -94,6 +94,7 @@ class QueueManager:
         Защита от дублирования:
         - Удаляет водителя из всех зон перед добавлением
         - Проверяет, что водитель не уже в этой очереди
+        Вставляет водителя в очередь по online_since (FIFO по времени выхода)
         """
         if zone not in ZONES:
             logger.warning(f"Попытка добавить водителя {driver_id} в неизвестную зону {zone}")
@@ -108,9 +109,10 @@ class QueueManager:
             logger.warning(f"Водитель {driver_id} уже в очереди {zone}, пропускаем добавление")
             return
         
-        # Добавляем в хвост новой очереди
+        # Добавляем и пересортировываем по online_since (None -> в конец)
         self._queues[zone].append(driver_id)
         self._driver_zones[driver_id] = zone
+        self._sort_queue_by_online_since(zone, db)
         
         logger.info(f"Водитель {driver_id} добавлен в очередь {zone} (позиция {len(self._queues[zone])})")
     
@@ -276,6 +278,26 @@ class QueueManager:
     def get_all_queues_info(self) -> Dict[str, Dict]:
         """Получить информацию о всех очередях"""
         return {zone: self.get_queue_info(zone) for zone in ZONES}
+
+    def _sort_queue_by_online_since(self, zone: str, db: Session):
+        """Упорядочить очередь зоны по online_since (FIFO: раньше online_since — выше)"""
+        ids = self._queues.get(zone, [])
+        if not ids:
+            return
+
+        drivers = (
+            db.query(Driver.id, Driver.online_since)
+            .filter(Driver.id.in_(ids))
+            .all()
+        )
+        online_map = {d.id: d.online_since for d in drivers}
+
+        def sort_key(did: int):
+            ts = online_map.get(did)
+            # None трактуем как самый новый (в конец)
+            return (ts is None, ts or datetime.utcnow() + timedelta(days=3650))
+
+        self._queues[zone] = sorted(ids, key=sort_key)
 
 
 # Глобальный экземпляр менеджера очередей

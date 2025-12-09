@@ -396,7 +396,9 @@ async def order_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             'dropoff_lat',
             'dropoff_lon',
             'pickup_submenu',
-            'pickup_mode'
+            'pickup_mode',
+            'destination_submenu',
+            'is_from_other_destination'
         ]:
             context.user_data.pop(key, None)
         
@@ -1416,7 +1418,7 @@ async def confirm_order_callback(update: Update, context: ContextTypes.DEFAULT_T
                 await notify_online_drivers(context, order)
             
         elif action == "cancel_order":
-            OrderService.cancel_order(db, order)
+            OrderService.cancel_order(db, order, canceled_by="client")
             await query.edit_message_text(
                 "❌ <b>Заказ отменен</b>\n\n"
                 "Не переживайте, вы можете создать новый заказ в любое время! 🚖",
@@ -1651,7 +1653,12 @@ async def customer_cancel_order_callback(update: Update, context: ContextTypes.D
             return
         
         # Проверяем, что заказ не завершен
-        if order.status in {OrderStatus.COMPLETED, OrderStatus.CANCELLED}:
+        if order.status in {
+            OrderStatus.COMPLETED,
+            OrderStatus.CANCELLED,
+            OrderStatus.CANCELLED_BY_CLIENT,
+            OrderStatus.CANCELLED_BY_DRIVER,
+        }:
             await query.answer("⚠️ Этот заказ уже завершен", show_alert=True)
             return
         
@@ -1663,7 +1670,7 @@ async def customer_cancel_order_callback(update: Update, context: ContextTypes.D
                 penalize = True
 
         # Отменяем заказ
-        OrderService.cancel_order(db, order)
+        OrderService.cancel_order(db, order, canceled_by="client")
         
         # Отменяем таймеры для этого заказа (если они есть)
         from bot.services.scheduler import scheduler
@@ -1760,6 +1767,8 @@ async def user_order_history_handler(update: Update, context: ContextTypes.DEFAU
             status_emoji = {
                 "finished": "✅",
                 "cancelled": "❌",
+                "cancelled_by_client": "❌",
+                "cancelled_by_driver": "❌",
                 "expired": "⏱",
                 "completed": "✅"
             }.get(order.status.value if hasattr(order.status, 'value') else order.status, "📋")

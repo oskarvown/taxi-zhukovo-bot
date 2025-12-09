@@ -168,7 +168,7 @@ class OrderDispatcher:
         driver.status = DriverStatus.ONLINE
         driver.pending_order_id = None
         driver.pending_until = None
-        driver.online_since = datetime.utcnow()  # Обновляем время (идёт в хвост)
+        driver.online_since = datetime.utcnow()  # Обновляем время (штраф: в конец)
         db.commit()
         
         # Добавляем обратно в очередь
@@ -400,7 +400,7 @@ class OrderDispatcher:
         driver.status = DriverStatus.ONLINE
         driver.pending_order_id = None
         driver.pending_until = None
-        driver.online_since = datetime.utcnow()
+        driver.online_since = datetime.utcnow()  # штраф: конец очереди
         
         db.commit()
         

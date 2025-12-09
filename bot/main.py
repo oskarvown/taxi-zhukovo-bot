@@ -46,6 +46,8 @@ async def post_init(application: Application) -> None:
     
     await scheduler.start_warning_cleanup_loop()
     logger.info("Ночная очистка предупреждений активирована")
+    await scheduler.start_broadcast_cleanup_loop()
+    logger.info("Фоновая очистка просроченных broadcast-резервов активирована")
     
     logger.info("Бот инициализирован и готов к работе")
 

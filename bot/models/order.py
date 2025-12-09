@@ -29,6 +29,8 @@ class OrderStatus(str, Enum):
     FINISHED = "finished"  # Поездка завершена
     FALLBACK = "fallback"  # Поиск по всем зонам (после 3 минут)
     EXPIRED = "expired"  # Никто не принял
+    CANCELLED_BY_CLIENT = "cancelled_by_client"  # Отменен клиентом
+    CANCELLED_BY_DRIVER = "cancelled_by_driver"  # Отменен водителем
     # Старые статусы (для обратной совместимости)
     PENDING = "pending"  # Ожидает водителя (deprecated, mapping -> NEW)
     IN_PROGRESS = "in_progress"  # Поездка в процессе (deprecated, mapping -> ONBOARD)

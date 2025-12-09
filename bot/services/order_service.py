@@ -252,12 +252,24 @@ class OrderService:
         return OrderService.set_finished(db, order)
     
     @staticmethod
-    def cancel_order(db: Session, order: Order) -> Order:
-        """Отменить заказ"""
+    def cancel_order(db: Session, order: Order, canceled_by: str = "system") -> Order:
+        """Отменить заказ
+
+        canceled_by: "client" | "driver" | "system"
+        """
         from bot.models.driver import DriverStatus
         from bot.services.queue_manager import queue_manager
         
-        order.status = OrderStatus.CANCELLED
+        # Сохраняем текущего назначенного водителя до очистки полей
+        assigned_driver_id = order.assigned_driver_id
+        
+        # Назначаем статус отмены по инициатору
+        if canceled_by == "client":
+            order.status = OrderStatus.CANCELLED_BY_CLIENT
+        elif canceled_by == "driver":
+            order.status = OrderStatus.CANCELLED_BY_DRIVER
+        else:
+            order.status = OrderStatus.CANCELLED
         order.assigned_driver_id = None
         order.selected_driver_id = None
         
@@ -284,6 +296,23 @@ class OrderService:
                     zone = driver_with_pending.current_zone.value if hasattr(driver_with_pending.current_zone, 'value') else driver_with_pending.current_zone
                     if zone and zone != "NONE":
                         queue_manager.add_driver(driver_with_pending.id, zone, db)
+        
+        # Если заказ был назначен водителю (ACCEPTED/ARRIVED/ONBOARD/BUSY)
+        if assigned_driver_id:
+            driver_assigned = db.query(Driver).filter(Driver.id == assigned_driver_id).first()
+            if driver_assigned:
+                driver_assigned.pending_order_id = None
+                driver_assigned.pending_until = None
+                driver_assigned.status = DriverStatus.ONLINE
+                # Клиентская отмена — сохраняем приоритет; отмена водителем — штраф (в конец)
+                if canceled_by == "driver":
+                    driver_assigned.online_since = datetime.utcnow()
+                elif driver_assigned.online_since is None:
+                    driver_assigned.online_since = datetime.utcnow()
+                
+                zone = driver_assigned.current_zone.value if hasattr(driver_assigned.current_zone, 'value') else driver_assigned.current_zone
+                if zone and zone != "NONE":
+                    queue_manager.add_driver(driver_assigned.id, zone, db)
         
         db.commit()
         db.refresh(order)
@@ -434,7 +463,14 @@ class OrderService:
         import logging
         logger = logging.getLogger(__name__)
         
-        history_statuses = [OrderStatus.FINISHED, OrderStatus.CANCELLED, OrderStatus.EXPIRED, OrderStatus.COMPLETED]
+        history_statuses = [
+            OrderStatus.FINISHED,
+            OrderStatus.CANCELLED,
+            OrderStatus.CANCELLED_BY_CLIENT,
+            OrderStatus.CANCELLED_BY_DRIVER,
+            OrderStatus.EXPIRED,
+            OrderStatus.COMPLETED,
+        ]
         
         orders = db.query(Order).filter(
             Order.customer_id == user_id,
@@ -467,7 +503,13 @@ class OrderService:
         import logging
         logger = logging.getLogger(__name__)
         
-        history_statuses = [OrderStatus.FINISHED, OrderStatus.CANCELLED, OrderStatus.COMPLETED]
+        history_statuses = [
+            OrderStatus.FINISHED,
+            OrderStatus.CANCELLED,
+            OrderStatus.CANCELLED_BY_CLIENT,
+            OrderStatus.CANCELLED_BY_DRIVER,
+            OrderStatus.COMPLETED,
+        ]
         
         orders = db.query(Order).filter(
             Order.assigned_driver_id == driver_id,

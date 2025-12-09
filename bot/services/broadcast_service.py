@@ -13,6 +13,8 @@ from bot.models.driver import Driver, DriverStatus
 from bot.models.order import Order, OrderStatus
 from bot.models.user import User
 from bot.services.scheduler import scheduler
+from bot.services.queue_manager import queue_manager
+from bot.services.queue_manager import queue_manager
 
 
 # Зоны, которые используют broadcast-режим
@@ -229,7 +231,10 @@ class BroadcastService:
         order.accepted_at = datetime.utcnow()
         
         driver.status = DriverStatus.BUSY
-        driver.pending_order_id = order.id
+        driver.pending_order_id = None
+        driver.pending_until = None
+        # Важное: убираем водителя из очереди, чтобы он не получал параллельные заказы
+        queue_manager.remove_driver(driver.id)
         
         db.commit()
         
@@ -353,6 +358,27 @@ class BroadcastService:
         
         print(f"✅ Водитель #{driver.id} принял broadcast-заказ #{order_id}")
         return True, "Заказ успешно принят!"
+
+    @staticmethod
+    def cleanup_expired_reserves(db: Session) -> int:
+        """Очистить просроченные broadcast-резервы (по reserve_expires_at)"""
+        now = datetime.utcnow()
+        expired = db.query(Order).filter(
+            Order.reserved_driver_id.isnot(None),
+            Order.reserve_expires_at.isnot(None),
+            Order.reserve_expires_at < now,
+            Order.status == OrderStatus.NEW
+        ).all()
+
+        cleared = 0
+        for order in expired:
+            order.reserved_driver_id = None
+            order.reserve_expires_at = None
+            cleared += 1
+
+        if cleared:
+            db.commit()
+        return cleared
     
     @staticmethod
     async def reserve_broadcast_order(

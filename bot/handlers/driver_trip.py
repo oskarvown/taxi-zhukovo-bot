@@ -380,6 +380,8 @@ async def driver_finish_callback(update: Update, context: ContextTypes.DEFAULT_T
         # Переводим водителя в OFFLINE статус (как будто он не на линии)
         driver.status = DriverStatus.OFFLINE
         driver.online_since = None
+        driver.pending_order_id = None
+        driver.pending_until = None
         # current_zone оставляем как есть (история, но водитель не в очереди)
         db.commit()
         
@@ -553,7 +555,7 @@ async def _process_cancel_order(context: ContextTypes.DEFAULT_TYPE, order, drive
     """Обработать отмену заказа (общая логика)"""
     try:
         # Отменяем заказ
-        OrderService.cancel_order(db, order)
+        OrderService.cancel_order(db, order, canceled_by="driver")
         
         # Если есть причина, сохраняем её в комментарий
         if cancel_reason:
@@ -561,13 +563,9 @@ async def _process_cancel_order(context: ContextTypes.DEFAULT_TYPE, order, drive
             db.commit()
         
         # Возвращаем водителя в онлайн
-        # ВАЖНО: Не обновляем online_since - сохраняем оригинальное время для FIFO порядка
+        # Штрафуем: ставим в конец очереди
         driver.status = DriverStatus.ONLINE
-        # online_since не меняем - водитель возвращается в очередь с тем же приоритетом
-        
-        # Если online_since был None (не должен быть, но на всякий случай)
-        if driver.online_since is None:
-            driver.online_since = datetime.utcnow()
+        driver.online_since = datetime.utcnow()
         
         db.commit()
         

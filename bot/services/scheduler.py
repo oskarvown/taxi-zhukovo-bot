@@ -19,6 +19,7 @@ class Scheduler:
         # Таймеры заказов: {order_id: task}
         self._order_tasks: Dict[int, asyncio.Task] = {}
         self._warning_cleanup_task: Optional[asyncio.Task] = None
+        self._broadcast_cleanup_task: Optional[asyncio.Task] = None
     
     async def schedule_driver_timeout(
         self,
@@ -154,6 +155,15 @@ class Scheduler:
                 pass
             self._warning_cleanup_task = None
 
+        # Останавливаем очистку broadcast-резервов
+        if self._broadcast_cleanup_task and not self._broadcast_cleanup_task.done():
+            self._broadcast_cleanup_task.cancel()
+            try:
+                await self._broadcast_cleanup_task
+            except asyncio.CancelledError:
+                pass
+            self._broadcast_cleanup_task = None
+
         logger.info("Все таймеры отменены")
     
     def get_stats(self) -> Dict:
@@ -171,6 +181,34 @@ class Scheduler:
             return
         self._warning_cleanup_task = asyncio.create_task(self._warning_cleanup_worker())
         logger.info("Ночная очистка предупреждений запущена")
+
+    async def start_broadcast_cleanup_loop(self, interval_seconds: int = 300):
+        """Запустить фоновую очистку просроченных broadcast-резервов"""
+        if self._broadcast_cleanup_task and not self._broadcast_cleanup_task.done():
+            return
+
+        async def _worker():
+            from database.db import SessionLocal  # локальный импорт
+            from bot.services.broadcast_service import BroadcastService
+            while True:
+                try:
+                    await asyncio.sleep(interval_seconds)
+                    db = SessionLocal()
+                    try:
+                        cleared = BroadcastService.cleanup_expired_reserves(db)
+                        if cleared:
+                            logger.info("[scheduler] cleared %s expired broadcast reserves", cleared)
+                    finally:
+                        db.close()
+                except asyncio.CancelledError:
+                    logger.info("Очистка broadcast-резервов остановлена")
+                    break
+                except Exception as exc:
+                    logger.error("Ошибка очистки broadcast-резервов: %s", exc, exc_info=True)
+                    await asyncio.sleep(60)
+
+        self._broadcast_cleanup_task = asyncio.create_task(_worker())
+        logger.info("Фоновая очистка broadcast-резервов запущена")
 
     async def _warning_cleanup_worker(self):
         """Фоновая задача очистки предупреждений"""
